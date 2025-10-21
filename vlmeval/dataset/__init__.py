@@ -52,6 +52,7 @@ from .vdc import VDC
 from .vcrbench import VCRBench
 from .gobench import GOBenchDataset
 from .sfebench import SFE
+from .earthsebench import EarthSE
 from .visfactor import VisFactor
 from .ost_bench import OSTDataset
 
@@ -208,7 +209,7 @@ IMAGE_DATASET = [
     PathVQA_TEST, TDBench, TDBenchGrounding, MicroBench, CharXiv, OmniMedVQA,
     WildDocBenchmark, MSEarthMCQ, OCR_Reasoning, PhyX, VLMBlind, CountBenchQA,
     ZEROBench, SCAM, Omni3DBench, TallyQA, _3DSRBench, BMMR, AffordanceDataset,
-    MMEReasoning, GOBenchDataset, SFE, ChartMimic, MMVMBench, XLRSBench,
+    MMEReasoning, GOBenchDataset, SFE, EarthSE, ChartMimic, MMVMBench, XLRSBench,
     OmniEarthMCQBench, VisFactor, OSTDataset, OCRBench_v2, TreeBench, CVQA, M4Bench,
     AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset,
     MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset
