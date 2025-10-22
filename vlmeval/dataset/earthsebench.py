@@ -109,7 +109,8 @@ def EarthSE_auxeval(model, data):
 
 
 class EarthSE(TextBaseDataset):
-
+    TYPE = 'QA'
+    
     DATASET_URL = {
         'EarthSE': 'https://opencompass.openxlab.space/utils/VLMEval/EarthSE.tsv', # TODO upload data
     }
