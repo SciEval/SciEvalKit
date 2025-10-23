@@ -2,6 +2,7 @@ from ..smp import *
 import os
 import sys
 from .base import BaseAPI
+import time
 
 APIBASES = {
     'OFFICIAL': 'https://api.openai.com/v1/chat/completions',
@@ -200,6 +201,14 @@ class OpenAIWrapper(BaseAPI):
         temperature = kwargs.pop('temperature', self.temperature)
         max_tokens = kwargs.pop('max_tokens', self.max_tokens)
 
+        max_retries = kwargs.pop('max_retries', 1)
+        fail_fast = kwargs.pop('fail_fast', False)
+
+        if not isinstance(max_retries, int) or max_retries < 1:
+            max_retries = 1
+
+        last_exception = None
+
         # Will send request if use Azure, dk how to use openai client for it
         if self.use_azure:
             headers = {'Content-Type': 'application/json', 'api-key': self.key}
@@ -228,21 +237,49 @@ class OpenAIWrapper(BaseAPI):
             payload.pop('n')
             payload['reasoning_effort'] = 'high'
 
-        response = requests.post(
-            self.api_base,
-            headers=headers, data=json.dumps(payload), timeout=self.timeout * 1.1)
-        ret_code = response.status_code
-        ret_code = 0 if (200 <= int(ret_code) < 300) else ret_code
-        answer = self.fail_msg
-        try:
-            resp_struct = json.loads(response.text)
-            answer = resp_struct['choices'][0]['message']['content'].strip()
-        except Exception as err:
-            if self.verbose:
-                self.logger.error(f'{type(err)}: {err}')
-                self.logger.error(response.text if hasattr(response, 'text') else response)
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    self.api_base,
+                    headers=headers, data=json.dumps(payload), timeout=self.timeout * 1.1)
 
-        return ret_code, answer, response
+                response.raise_for_status()
+                resp_struct = json.loads(response.text)
+                answer = resp_struct['choices'][0]['message']['content'].strip()
+
+                ret_code = 0
+                return ret_code, answer, response
+            except Exception as err:
+                last_exception = err
+
+                if self.verbose:
+                    retry_msg = f" Retrying in 1 second..." if (attempt < max_retries - 1) else " No more retries."
+                    log_msg = (
+                        f"Attempt {attempt + 1}/{max_retries} failed. "
+                        f"Error: {type(err).__name__}: {err}{retry_msg}"
+                    )
+                    self.logger.warning(log_msg)
+
+                if attempt < max_retries - 1:
+                    time.sleep(1)
+                else:
+                    break
+
+        if fail_fast:
+            final_error_message = (
+                f"Failed to obtain answer from API after {max_retries} attempts. "
+                f"The last error was: {type(last_exception).__name__}: {last_exception}"
+            )
+            if 'response' in locals() and hasattr(response, 'text'):
+                final_error_message += f"\nLast failing response text: {response.text[:500]}..."
+
+            print(final_error_message, file=sys.stderr)
+            os._exit(1)
+        else:
+            ret_code = response.status_code if 'response' in locals() and not None else -1
+            answer = self.fail_msg
+            response_obj = response if 'response' in locals() else None
+            return ret_code, answer, response_obj
 
     def get_image_token_len(self, img_path, detail='low'):
         import math
@@ -289,5 +326,5 @@ class OpenAIWrapper(BaseAPI):
 
 class GPT4V(OpenAIWrapper):
 
-    def generate(self, message, dataset=None):
-        return super(GPT4V, self).generate(message)
+    def generate(self, message, dataset=None, **kwargs):
+        return super(GPT4V, self).generate(message, **kwargs)

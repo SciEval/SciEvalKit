@@ -223,6 +223,7 @@ class BaseAPI:
         Returns:
             str: The generated answer of the Failed Message if failed to obtain answer.
         """
+
         if self.check_content(message) == 'listdict':
             message = self.preprocess_message_with_role(message)
 
