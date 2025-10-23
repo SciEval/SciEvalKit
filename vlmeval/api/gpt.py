@@ -246,7 +246,8 @@ class OpenAIWrapper(BaseAPI):
                 response.raise_for_status()
                 resp_struct = json.loads(response.text)
                 answer = resp_struct['choices'][0]['message']['content'].strip()
-
+                if resp_struct['choices'][0]['finish_reason'] == 'refusal':
+                    answer = "Refusal response from API"
                 ret_code = 0
                 return ret_code, answer, response
             except Exception as err:
