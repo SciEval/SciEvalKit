@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 from collections import defaultdict
-from datasets import load_dataset
+from ...smp import *
 
-from .utils.cmphysbench.SEED import SEED
+from .SEED import SEED
 
 def extract_boxed_latex(text):
     if not isinstance(text, str):
@@ -96,7 +96,7 @@ class CMPhysBench():
         results['log'] = "" 
         results['score'] = 0.0 
         
-         for i in range(len(results)):
+        for i in range(len(results)):
             llm_response = results.loc[i, 'prediction']
             prediction = extract_boxed_latex(llm_response)
             
