@@ -195,6 +195,10 @@ You can launch the evaluation by setting either --data and --model or --config.
     parser.add_argument(
         '--use-vllm', action='store_true', help='use vllm to generate, the flag is only supported in Llama4 for now')
     parser.add_argument('--use-verifier', action='store_true', help='use verifier to evaluate')
+    parser.add_argument('--max-retries', type=int, default=1, help='Maximum number of retries for API calls. Specifically in generate_inner method in gpt.py, it should be fixed in future versions '
+                                                                   'Default is 1 (no retries). Must be an integer >= 1.')
+    parser.add_argument('--fail-fast', action='store_true', help='If set, the program will raise an exception and stop upon an unrecoverable API error '
+             'after all retries are exhausted. If not set, it will record a failure message and continue. Specifically in generate_inner method in gpt.py, it should be fixed in future versions')
 
     args = parser.parse_args()
     return args
@@ -345,7 +349,10 @@ def main():
                             verbose=args.verbose,
                             api_nproc=args.api_nproc,
                             ignore_failed=args.ignore,
-                            use_vllm=args.use_vllm)
+                            use_vllm=args.use_vllm,
+                            max_retries=args.max_retries,
+                            fail_fast=args.fail_fast
+                        )
 
                 # Set the judge kwargs first before evaluation or dumping
 
@@ -353,6 +360,8 @@ def main():
                     'nproc': args.api_nproc,
                     'verbose': args.verbose,
                     'retry': args.retry if args.retry is not None else 3,
+                    'max_retries': args.max_retries,
+                    'fail_fast': args.fail_fast,
                     **(json.loads(args.judge_args) if args.judge_args else {}),
                 }
 

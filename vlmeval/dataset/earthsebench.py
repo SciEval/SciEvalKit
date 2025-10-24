@@ -81,6 +81,9 @@ def EarthSE_auxeval(model, data):
         for i in range(lt):
             total_score = 0
             item = data.iloc[i]
+            if item['answer'] == item ['prediction']:
+                total_score += 1
+                continue
             prompt = make_prompt(item)
             retry = 3
             for j in range(retry):
@@ -98,6 +101,9 @@ def EarthSE_auxeval(model, data):
         prompt = make_prompt(item)
         retry = 3
         for i in range(retry):
+            if item['answer'] == item ['prediction']:
+                score = 1
+                return dict(score=score, log='Success to Judge')
             output = model.generate(prompt, temperature=0.5 * i)
             if output in ['A', 'B']:
                 if output == 'A':
@@ -110,7 +116,7 @@ def EarthSE_auxeval(model, data):
 
 class EarthSE(TextBaseDataset):
     TYPE = 'QA'
-    
+
     DATASET_URL = {
         'EarthSE': 'https://opencompass.openxlab.space/utils/VLMEval/EarthSE.tsv', # TODO upload data
     }
