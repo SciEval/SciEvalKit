@@ -41,7 +41,7 @@ class OpenAIWrapper(BaseAPI):
                  verbose: bool = False,
                  system_prompt: str = None,
                  temperature: float = 0,
-                 timeout: int = 300,
+                 timeout: int = 600,
                  api_base: str = None,
                  max_tokens: int = 2048,
                  img_size: int = -1,
@@ -279,6 +279,22 @@ class OpenAIWrapper(BaseAPI):
         else:
             ret_code = response.status_code if 'response' in locals() and not None else -1
             answer = self.fail_msg
+            # We failed after all retries -> log details to stderr, return empty answer so it won't pollute .py files.
+            http_info = (
+                f"HTTP {response.status_code}" if 'response' in locals() and response is not None else 'No HTTP response'
+            )
+            err_info = (
+                f"{type(last_exception).__name__}: {last_exception}" if last_exception else 'Unknown error'
+            )
+            resp_snippet = (
+                f" | Response text: {response.text[:400]}..." if 'response' in locals() and response is not None and hasattr(response, 'text') else ''
+            )
+            msg = f"Failed to obtain answer via API. {http_info} | {err_info}{resp_snippet}"
+            # Print detailed info to stderr for debug, but return empty answer to avoid polluting generated code.
+            print(msg)
+
+            # ret_code = response.status_code if 'response' in locals() and response is not None else -1
+            # answer = ""  # empty string prevents writing error text into .py
             response_obj = response if 'response' in locals() else None
             return ret_code, answer, response_obj
 
