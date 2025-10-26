@@ -364,6 +364,10 @@ def main():
                     'fail_fast': args.fail_fast,
                     **(json.loads(args.judge_args) if args.judge_args else {}),
                 }
+                # Pass work_dir to dataset.evaluate so paths are constructed correctly
+                judge_kwargs['work_dir'] = args.work_dir
+                # Pass the current model name to dataset.evaluate so it can build proper output dirs
+                judge_kwargs['eval_model_name'] = model_name
 
                 if args.retry is not None:
                     judge_kwargs['retry'] = args.retry

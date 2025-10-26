@@ -86,6 +86,8 @@ from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
 
+from .SciCode.scicode import SciCode
+
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -229,7 +231,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset
+    TextMCQDataset, SciCode
 ]
 
 CUSTOM_DATASET = [

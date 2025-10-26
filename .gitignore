@@ -210,3 +210,6 @@ GPT4o_MINI/
 #SenseNova*
 
 .DS_Store
+tools/*
+tmp_*/*
+vlmeval/dataset/SciCode/eval/data/*.h5
