@@ -409,6 +409,8 @@ def main():
                         judge_kwargs['model'] = 'gpt-4o'
                     elif listinstr(['AyaVisionBench'], dataset_name):
                         judge_kwargs['model'] = 'gpt-4.1'
+                    elif listinstr(['MaScQA'], dataset_name):
+                        judge_kwargs['model'] = 'o3'
 
                 if args.use_verifier:
                     judge_kwargs['use_verifier'] = True
