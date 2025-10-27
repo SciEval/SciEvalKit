@@ -14,12 +14,12 @@ from .image_vqa import (
     ImageVQADataset, MathVision, OCRBench, MathVista, LLaVABench, LLaVABench_KO, VGRPBench, MMVet, MTVQADataset,
     TableVQABench, CustomVQADataset, CRPE, MathVerse, OlympiadBench, SeePhys, QSpatial, VizWiz, MMNIAH, LogicVista,
     MME_CoT, MMSci_Captioning, Physics_yale, TDBenchGrounding, WildDocBenchmark, OCR_Reasoning, PhyX, CountBenchQA,
-    ZEROBench, Omni3DBench, TallyQA, MMEReasoning, MMVMBench, BMMR, OCRBench_v2, AyaVisionBench
+    ZEROBench, Omni3DBench, TallyQA, MMEReasoning, MMVMBench, BMMR, OCRBench_v2, AyaVisionBench, SLAKE_EN_TEST
 )
 
 from .image_ccocr import CCOCRDataset
 from .image_shortqa import ImageShortQADataset, PathVQA_VAL, PathVQA_TEST
-from .text_mcq import CustomTextMCQDataset, TextMCQDataset
+from .text_mcq import CustomTextMCQDataset, TextMCQDataset, ProteinLMBench
 
 from .vcr import VCRDataset
 from .mmlongbench import MMLongBench
@@ -217,7 +217,7 @@ IMAGE_DATASET = [
     MMEReasoning, GOBenchDataset, SFE, EarthSE, ChartMimic, MMVMBench, XLRSBench,
     OmniEarthMCQBench, VisFactor, OSTDataset, OCRBench_v2, TreeBench, CVQA, M4Bench,
     AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset,
-    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, Clima_QA
+    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, SLAKE_EN_TEST, Clima_QA
 ]
 
 VIDEO_DATASET = [
@@ -233,7 +233,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset, PHYSICS, MaScQA, SciCode
+    TextMCQDataset, PHYSICS, MaScQA, SciCode, ProteinLMBench
 ]
 
 CUSTOM_DATASET = [
