@@ -3626,3 +3626,100 @@ class AyaVisionBench(ImageVQADataset):
         result_file = get_intermediate_file_path(eval_file, '_acc')
         dump(ret, result_file)
         return ret
+
+class SLAKE_EN_TEST(ImageVQADataset):
+    '''
+    Test set of SLAKE (English)
+    '''    
+    DATASET_URL = {
+        'SLAKE_EN_TEST': 'https://huggingface.co/datasets/BoKelvin/SciData/resolve/main/SLAKE_EN_TEST.tsv',
+    }
+
+    DATASET_MD5 = {
+        'SLAKE_EN_TEST': None,
+    }
+
+    
+    # In this version, we test model's zero-shot performance in a generative paradigm in two metrics:
+    # 1) Exact Matching: whether the model's answer exactly matches the ground truth answer.
+    # 2) GPT Judging: whether the model's answer is considered correct by GPT-4o-mini. 
+
+    # It returns a DataFrame
+    def evaluate(self, eval_file, **judge_kwargs):
+        from .utils.vqa_eval import hit_calculate, process_line
+        from .image_shortqa import Comprehensive_auxeval
+
+        data = load(eval_file)
+        dataset = self.dataset_name
+        assert 'answer' in data and 'prediction' in data
+        data['prediction'] = [str(x) for x in data['prediction']]
+        data['answer'] = [str(x) for x in data['answer']]
+        lt = len(data)
+        pool = mp.Pool(16)
+        lines = [data.iloc[i] for i in range(lt)]
+        storage = get_intermediate_file_path(eval_file, '_judge')
+        tmp_file = get_intermediate_file_path(eval_file, '_tmp', 'pkl')
+        nproc = judge_kwargs.pop('nproc', 4)
+        
+        if not osp.exists(storage):
+            # Exact Matching
+            res = pool.map(partial(process_line, method='accuracy'), lines)
+            data['eval_gt'] = [r['gt'] for r in res]
+            data['eval_pred'] = [r['pred'] for r in res]
+            data['eval_match_exact'] = [r['match'] for r in res]
+            data['eval_score_exact'] = [np.mean(r['match']) for r in res]
+
+    
+            # GPT Judging
+            ans_map = {} if not osp.exists(tmp_file) else load(tmp_file)
+            model = judge_kwargs.get('model', 'gpt-4o-mini')
+            if gpt_key_set():
+                model = build_judge(model=model, **judge_kwargs)
+                if not model.working():
+                    warnings.warn('OPENAI API is not working properly, will use exact matching for evaluation')
+                    warnings.warn(DEBUG_MESSAGE)
+                    model = None
+            else:
+                model = None
+                warnings.warn('OPENAI_API_KEY is not working properly, will use exact matching for evaluation')
+
+            if model is not None:
+                lines = [data.iloc[i] for i in range(len(data))]
+                indices = [x['index'] for x in lines if x['index'] not in ans_map]
+                lines = [x for x in lines if x['index'] not in ans_map]
+                tups = [(model, line) for line in lines]
+
+
+                if len(lines):
+                    res = track_progress_rich(
+                        Comprehensive_auxeval, tups, nproc=nproc, chunksize=nproc, keys=indices, save=tmp_file)
+                    for k, v in zip(indices, res):
+                        ans_map[k] = v
+
+            judge_results = [ans_map[x] for x in data['index']]
+            data['hit'] = [x['hit'] for x in judge_results]
+            data['log'] = [x['log'] for x in judge_results]
+            
+            dump(data, storage)
+
+
+        data = load(storage)
+       
+        ret = dict()
+        ret["Acc_TYPE"]  = ["Exact_Matching", "GPT_Judging"]
+    
+        splits = list(set(data['split']))
+        for sp in splits:
+            ret[sp] = [np.mean(data[data['split'] == sp]['eval_score_exact'])*100]
+            ret[sp] += [np.mean(data[data['split'] == sp]['hit'])*100]
+        
+        ret['Overall'] = [np.mean(data['eval_score_exact'])*100]
+        ret['Overall'] += [np.mean(data['hit'])*100]
+    
+
+        ret = pd.DataFrame(ret)
+        ret.round(2)
+        result_file = get_intermediate_file_path(eval_file, '_acc')
+        dump(ret, result_file)
+                
+        return ret
