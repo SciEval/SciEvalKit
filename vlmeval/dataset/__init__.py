@@ -55,6 +55,7 @@ from .sfebench import SFE
 from .earthsebench import EarthSE
 from .visfactor import VisFactor
 from .ost_bench import OSTDataset
+from .climaqa import Clima_QA
 
 from .EgoExoBench.egoexobench import EgoExoBench_MCQ
 
@@ -212,7 +213,7 @@ IMAGE_DATASET = [
     MMEReasoning, GOBenchDataset, SFE, EarthSE, ChartMimic, MMVMBench, XLRSBench,
     OmniEarthMCQBench, VisFactor, OSTDataset, OCRBench_v2, TreeBench, CVQA, M4Bench,
     AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset,
-    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset
+    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, Clima_QA
 ]
 
 VIDEO_DATASET = [
