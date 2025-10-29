@@ -3,6 +3,7 @@
 from latex2sympy2_extended import *
 from sympy import simplify
 import timeout_decorator
+import wrapt_timeout_decorator
 
 import re
 
@@ -847,7 +848,7 @@ def replace_derivative_frac_preserve_frac(expr: str) -> str:
 
     return re.sub(pattern, repl, expr, flags=re.VERBOSE)
 
-@timeout_decorator.timeout(10, timeout_exception=TimeoutError)
+@wrapt_timeout_decorator.timeout(10, timeout_exception=TimeoutError,use_signals=False)
 def master_convert_with_timeout(s, t):
     """Master convert with timeout protection"""
     s = re.sub(r'~', '', s)
