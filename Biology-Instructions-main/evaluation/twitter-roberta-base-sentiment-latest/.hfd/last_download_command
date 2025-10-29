@@ -1,0 +1,1 @@
+REPO_ID=cardiffnlp/twitter-roberta-base-sentiment-latest TOOL=aria2c INCLUDE_PATTERNS= EXCLUDE_PATTERNS= DATASET=0 HF_USERNAME= HF_TOKEN= HF_TOKEN=https://hf-mirror.com REVISION=main
