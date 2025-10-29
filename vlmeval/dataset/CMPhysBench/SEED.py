@@ -8,7 +8,7 @@ from sympy.logic.boolalg import And, Or, Not
 
 import re
 import numpy as np
-import timeout_decorator
+import wrapt_timeout_decorator
 from .extended_zss import ext_distance
 from .latex_pre_process import *
 from sympy.simplify import *
@@ -21,7 +21,7 @@ You only need to use EED and install the following packages:
 - sympy
 - numpy
 - latex2sympy2_extended
-- timeout_decorator
+- wrapt_timeout_decorator
 """
 
 """
@@ -164,7 +164,7 @@ def numeric_score_calc(student_answer_exp, ground_truth_exp):
         print(f"  -> numeric_score_calc error: {e}")
         return 0
 
-@timeout_decorator.timeout(30, timeout_exception=TimeoutError)
+@wrapt_timeout_decorator.timeout(30, timeout_exception=TimeoutError)
 def simplify_with_timeout(expr):
     return simplify(expr)
 def time_simplify(expr):
@@ -174,7 +174,7 @@ def time_simplify(expr):
     except TimeoutError:
         return expr
 
-@timeout_decorator.timeout(10, timeout_exception=TimeoutError)
+@wrapt_timeout_decorator.timeout(10, timeout_exception=TimeoutError)
 def equal_with_timeout(expr1,expr2):
     return expr1.equals(expr2)
 def time_equal(expr1,expr2):
@@ -528,7 +528,7 @@ def SEED(answer_latex,test_latex,t,debug_mode=False):
         test_exp=test_exp.subs(rep2)
 
         # if False:
-        @timeout_decorator.timeout(10, timeout_exception=TimeoutError)
+        @wrapt_timeout_decorator.timeout(10, timeout_exception=TimeoutError)
         def subtract_and_simplify_with_timeout(a, b):
             if isinstance(a, Expr) and isinstance(b, Expr):
                 return simplify(expand(a - b))

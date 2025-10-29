@@ -1,8 +1,5 @@
-import numpy as np
-import pandas as pd
-from collections import defaultdict
 from ...smp import *
-
+from ..text_base import TextBaseDataset
 from .SEED import SEED
 
 def extract_boxed_latex(text):
@@ -55,15 +52,27 @@ def report_cmphys_score(df):
     
     return report_df
 
-class CMPhysBench():
+class CMPhysBench(TextBaseDataset):
     """
     CMPhysBench Dataset.
     This dataset requires special evaluation logic (SEED metric).
     """
+    MODALITY = "TEXT"
+    TYPE = "QA"
+    dataset_name = "CMPhysBench"
+
+    DATASET_URL = {
+        'CMPhysBench': 'https://opencompass.openxlab.space/utils/VLMEval/CMPhysBench.tsv'
+    }
+
+    DATASET_MD5 = {
+        'CMPhysBench': '071a49b536ea28ed0a0f3e1b916825f7'
+    }
+
     @classmethod
     def supported_datasets(cls):
         return {
-            'weidawang/CMPhysBench': cls,
+            'CMPhysBench': cls,
         }
         
     def build_prompt(self, line):
@@ -73,11 +82,13 @@ class CMPhysBench():
         message =[
                 {
                     "role": "system",
-                    "content": "You are a condensed matter physics expert. Please read the following question and provide a step-by-step solution using only the given symbols. Do not introduce any new symbols that are not provided in the problem statement. Your final answer must be presented as a readable LaTeX formula, enclosed in a \\boxed{} environment."
+                    "type": "text",
+                    "value": "You are a condensed matter physics expert. Please read the following question and provide a step-by-step solution using only the given symbols. Do not introduce any new symbols that are not provided in the problem statement. Your final answer must be presented as a readable LaTeX formula, enclosed in a \\boxed{} environment."
                 },
                 {
                     "role": "user",
-                    "content": question
+                    "type": "text",
+                    "value": question
                 }
             ]
         return message
@@ -111,16 +122,14 @@ class CMPhysBench():
             
             try:
                 eval_result, _, _, _ = SEED(
-                    ground_truth=str(ground_truth),
-                    prediction=str(prediction),
-                    answer_type=str(answer_type)
+                    str(ground_truth),
+                    str(prediction),
+                    str(answer_type)
                 )
 
-                score = eval_result.get('score', 0)
-                log = eval_result.get('log', '')
-                
+                score = eval_result
+
                 results.loc[i, 'score'] = score
-                results.loc[i, 'log'] = log
                 
                 if score == 100:
                     results.loc[i, 'hit'] = 1
