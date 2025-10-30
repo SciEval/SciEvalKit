@@ -86,8 +86,8 @@ from .mmhelix import MMHELIX
 from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
+from .PHYSICS.PHYSICS import PHYSICS
 from .mascqa import MaScQA
-
 from .SciCode.scicode import SciCode
 
 
@@ -233,7 +233,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset, MaScQA, SciCode
+    TextMCQDataset, PHYSICS, MaScQA, SciCode
 ]
 
 CUSTOM_DATASET = [
