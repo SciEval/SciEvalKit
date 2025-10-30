@@ -987,7 +987,7 @@ def grade_answer_xverify(given_answer: str, ground_truth: str, problem: str, **j
             **kwargs
         )
         return response.choices[0].message.content
-    
+    model_args = judge_kwargs["model_args"]
     client = OpenAI(api_key=model_args.api_key, base_url=model_args.base_url)
     prompt = f'''
 You are a diligent and precise assistant tasked with evaluating the correctness of responses. You will receive a question, an output sentence, and the correct answer. Your task is to determine if the output sentence accurately answers the question based on the provided correct answer. Respond with either [Correct] or [Incorrect].
