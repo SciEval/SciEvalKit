@@ -89,6 +89,7 @@ from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
 from .PHYSICS.PHYSICS import PHYSICS
 from .mascqa import MaScQA
 from .SciCode.scicode import SciCode
+from .chembench4k import ChemBench4K
 
 
 class ConcatDataset(ImageBaseDataset):
@@ -217,7 +218,8 @@ IMAGE_DATASET = [
     MMEReasoning, GOBenchDataset, SFE, EarthSE, ChartMimic, MMVMBench, XLRSBench,
     OmniEarthMCQBench, VisFactor, OSTDataset, OCRBench_v2, TreeBench, CVQA, M4Bench,
     AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset,
-    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, SLAKE_EN_TEST, Clima_QA
+    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, SLAKE_EN_TEST
+    , Clima_QA
 ]
 
 VIDEO_DATASET = [
@@ -233,7 +235,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset, PHYSICS, MaScQA, SciCode, ProteinLMBench
+    TextMCQDataset, MaScQA, SciCode, ChemBench4K, ProteinLMBench, PHYSICS
 ]
 
 CUSTOM_DATASET = [
