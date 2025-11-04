@@ -89,7 +89,9 @@ from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
 from .PHYSICS.PHYSICS import PHYSICS
 from .mascqa import MaScQA
 from .SciCode.scicode import SciCode
-
+from .Researchbench.generate import ResearchbenchGenerate
+from .Researchbench.rank import ResearchbenchRank
+from .Researchbench.retrieve import  ResearchbenchRetrieve
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -233,7 +235,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset, PHYSICS, MaScQA, SciCode, ProteinLMBench
+    TextMCQDataset,ResearchbenchGenerate,ResearchbenchRank,ResearchbenchRetrieve, PHYSICS, MaScQA, SciCode, ProteinLMBench
 ]
 
 CUSTOM_DATASET = [

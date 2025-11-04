@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import time
 from typing import Any
 try:
@@ -7,10 +6,11 @@ try:
 except Exception:
     OpenAI = None
 import requests
-
+from vlmeval.smp import *
 import os
 import sys
 import json
+from ..text_base import TextBaseDataset
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Any
 import csv, json
@@ -23,28 +23,12 @@ if _PROJ_ROOT not in sys.path:
 
 from .utils import (
     instruction_prompts,
-    calculate_average_ratio_top1_top2,
-    recover_raw_background,
-    load_chem_annotation,
-    load_bkg_and_insp_from_chem_annotation,
-    load_dict_title_2_abstract,
-    load_found_inspirations,
-    load_groundtruth_inspirations_as_screened_inspirations,
-    organize_raw_inspirations,
-    load_grouped_inspirations,
-    load_coarse_grained_hypotheses,
     llm_generation,
     llm_generation_while_loop,
-    get_structured_generation_from_raw_generation_by_llm,
     get_structured_generation_from_raw_generation,
     pick_score,
-    jaccard_similarity,
-    title_transform_to_exact_version_of_title_abstract_from_markdown,
-    get_item_from_dict_with_very_similar_but_not_exact_key,
-    recover_generated_title_to_exact_version_of_title,
     if_element_in_list_with_similarity_threshold,
     save_with_json,
-    ordered_set
 )
 
 
@@ -113,23 +97,26 @@ class OneCaseOutput:
 
 
 
-
-
+#
 # ==== 类定义开头：加数据集标识 ====
-class ResearchbenchGenerate:
+class ResearchbenchGenerate(TextBaseDataset):
     NAME = 'ResearchbenchGenerate'
     dataset_name = 'ResearchbenchGenerate'
     MODALITY = 'TEXT'
-    TYPE = 'GEN' 
-    def __init__(self,
-                dataset: str = 'ResearchbenchGenerate',
-                ann_path: str | None = None,
-                module_name: str = 'coarse_hypothesis_generation',
-                model_name: str = 'gpt-4o-mini',
-                api_type: int = 0,
-                temperature: float = 1.0,
-                save_dir: str = 'outputs/researchbench_generate',
-                **kwargs):
+    TYPE = 'GEN'
+
+    DATASET_URL = {
+        'ResearchbenchGenerate': 'https://opencompass.openxlab.space/utils/VLMEval/ResearchbenchGenerate.tsv' # TODO upload data
+    }
+
+    DATASET_MD5 = {
+        'ResearchbenchGenerate': '5ad4204ac8e413a151902015f0acb250'
+    }
+
+
+    def __init__(self, dataset: str = 'ResearchbenchGenerate', ann_path: str | None = None,
+                 module_name: str = 'coarse_hypothesis_generation', model_name: str = 'gpt-4o-mini', api_type: int = 0,
+                 temperature: float = 1.0, save_dir: str = 'outputs/researchbench_generate', **kwargs):
         self.cfg = GenerateConfig(
             module_name=module_name,
             chem_annotation_path=None,
@@ -142,7 +129,12 @@ class ResearchbenchGenerate:
         self.dataset = dataset
         self.dataset_name = dataset
         self.client = None
-        self.ann_path = ann_path 
+        self.prepare_tsv(self.DATASET_URL[dataset],self.DATASET_MD5[dataset])
+        data_root = LMUDataRoot()
+        os.makedirs(data_root, exist_ok=True)
+        file_name = self.DATASET_URL[self.dataset_name].split('/')[-1]
+        data_path = osp.join(data_root, file_name)
+        self.ann_path = ann_path if ann_path is not None else data_path
         os.makedirs(self.cfg.save_dir, exist_ok=True)
 
         self._dump_dir = os.path.join(self.cfg.save_dir, "dump_images")
@@ -158,7 +150,6 @@ class ResearchbenchGenerate:
         }
 
         self._materialize_dataframe()
-
 
 
     def _materialize_dataframe(self):
@@ -211,9 +202,6 @@ class ResearchbenchGenerate:
                         note=(row.get('note') or None),
                     ))
 
-    def __len__(self):
-        self.__post_init_minimal()
-        return len(self._cases)
 
     def __getitem__(self, idx: int):
         x = self._cases[idx]
@@ -333,24 +321,29 @@ class ResearchbenchGenerate:
             note=(getv('note') or None),
         )
 
-    def build_prompt(self, x: Any) -> str:
+    def build_prompt(self, x: Any) :
         if isinstance(x, OneCaseInput):
+            # return [dict(type="text", value=self._build_prompt_from_case(x))]
             return self._build_prompt_from_case(x)
         try:
             if isinstance(x, dict):
                 q = x.get('question')
                 if isinstance(q, str) and q.strip():
-                    return q
+                    return [dict(type="text", value=str(q))]
+                    # return q
             else:
                 if 'question' in x and isinstance(x['question'], str) and x['question'].strip():
-                    return x['question']
+                    return [dict(type="text", value=str(x['question']))]
+                    # return x['question']
         except Exception:
             pass
         try:
             tmp_case = self._row_to_case(x)
-            return self._build_prompt_from_case(tmp_case)
+            return [dict(type="text", value=str(self._build_prompt_from_case(tmp_case)))]
+            # return self._build_prompt_from_case(tmp_case)
         except Exception:
-            return "You are an expert researcher. Please propose a plausible hypothesis.\nBackground: Not provided."
+            return [dict(type="text", value="You are an expert researcher. Please propose a plausible hypothesis.\nBackground: Not provided.")]
+            # return "You are an expert researcher. Please propose a plausible hypothesis.\nBackground: Not provided."
     def build_prompt_by_index(self, idx: int) -> str:
         return self._build_prompt_from_case(self._cases[idx])
     def _build_prompt_from_case(self, x: OneCaseInput) -> str:
@@ -388,8 +381,10 @@ class ResearchbenchGenerate:
     def _ensure_openai_client(self):
         if getattr(self, "client", None) is not None:
             return self.client
-        base_url = os.environ.get("OPENAI_API_BASE") or os.environ.get("OPENAI_BASE_URL") or "https://api.openai.com/v1"
-        api_key  = os.environ.get("OPENAI_API_KEY") or os.environ.get("OPENAI_APIKEY") or ""
+        # TODO
+        base_url = os.environ.get("BOYUE_API_BASE") or os.environ.get("BOYUE_API_BASE") or "http://35.220.164.252:3888/v1/chat/completions"
+        base_url = base_url[:-17]
+        api_key  = os.environ.get("BOYUE_API_KEY") or os.environ.get("BOYUE_API_KEY") or ""
         if OpenAI is not None:
             self.client = OpenAI(api_key=api_key, base_url=base_url)
             return self.client
@@ -795,13 +790,21 @@ class ResearchbenchGenerate:
         judged_path = str(p.with_name(p.stem + "_judged.xlsx"))
         df.to_excel(judged_path, index=False)
         print(f"[OK] LLM Judge Completed, AVG Score: {avg_score if avg_score is not None else 'N/A'}, Saved at: {judged_path}")
-        return {
+        out_dir = os.path.dirname(eval_file)
+        os.makedirs(out_dir, exist_ok=True)
+        base = os.path.splitext(os.path.basename(eval_file))[0]
+        result_file_path = os.path.join(out_dir, f"{base}_eval.json")
+        eval_result = {
             "items_scored": len(valid),
-            "avg_score": avg_score,
+            "avg_score": avg_score/5,
             "score_dist": dist,
             "judged_file": judged_path,
             "judge_model": eval_model
         }
+        # 将字典数据写入 JSON 文件
+        with open(result_file_path, "w") as f:
+            json.dump(eval_result, f, indent=4)
+        return eval_result
 
     def run(self, cases: List[OneCaseInput]) -> Dict[str, Dict[str, Any]]:
         results: Dict[str, Dict[str, Any]] = {}

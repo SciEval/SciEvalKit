@@ -4,8 +4,10 @@ import re
 import json
 import pandas as pd
 from typing import Any, Dict, List, Optional, Union
+from vlmeval.smp import *
+from ..text_base import TextBaseDataset
 
-class ResearchbenchRank:
+class ResearchbenchRank(TextBaseDataset):
     MODALITY = 'TEXT'
     TYPE = 'MCQ'
     NAME = 'ResearchbenchRank'
@@ -25,6 +27,16 @@ class ResearchbenchRank:
         "**Analysis**: <brief reasoning>\n"
         "**Selection of research hypothesis candidate**: candidate 1 or candidate 2"
     )
+
+    DATASET_URL = {
+        'ResearchbenchRank': 'https://opencompass.openxlab.space/utils/VLMEval/ResearchbenchRank.tsv'
+        # TODO upload data
+    }
+
+    DATASET_MD5 = {
+        'ResearchbenchRank': 'fb725d13c7da926de01ffa1802a1c4e7'
+    }
+
     MAIN_PATTERN = re.compile(
         r"\*\*Selection\s+of\s+research\s+hypothesis\s+candidate\*\*\s*[:：]\s*candidate\s*(\d+)",
         flags=re.IGNORECASE,
@@ -33,13 +45,16 @@ class ResearchbenchRank:
         re.compile(r"candidate\s*([12])", flags=re.IGNORECASE),
         re.compile(r"\b([12])\b"),
     ]
-    @classmethod
-    def supported_datasets(cls):
-        return {cls.NAME: cls}
-    def __init__(self, dataset: str, ann_path: str, save_dir: Optional[str] = None, **kwargs):
+
+    def __init__(self, dataset: str, ann_path: str | None = None, save_dir: Optional[str] = None, **kwargs):
         self.dataset = dataset
         self.dataset_name = dataset
-        self.ann_path = ann_path
+        self.prepare_tsv(self.DATASET_URL[dataset], self.DATASET_MD5[dataset])
+        data_root = LMUDataRoot()
+        os.makedirs(data_root, exist_ok=True)
+        file_name = self.DATASET_URL[self.dataset_name].split('/')[-1]
+        data_path = osp.join(data_root, file_name)
+        self.ann_path = ann_path if ann_path is not None else data_path
         self.save_dir = save_dir
         self.dump_image = False
         if not self.ann_path or not os.path.exists(self.ann_path):
@@ -94,7 +109,7 @@ class ResearchbenchRank:
         self.data = self.df
 
     def __len__(self):
-        return len(self.df)
+        return len(self.data)
     def build_prompt(self, line: Union[int, pd.Series]) -> List[Dict[str, Any]]:
         row = self.df.iloc[line] if isinstance(line, int) else line
         return [dict(type="text", value=str(row["question"]))]
@@ -188,7 +203,7 @@ class ResearchbenchRank:
             ).reset_index().to_dict("records")
             if len(df_agg) else []
         )
-        export_details = bool(judge_kwargs.get("export_details", False))
+        export_details = bool(judge_kwargs.get("export_details", True))
         if export_details:
             try:
                 out_dir = self.save_dir or os.path.dirname(eval_file)

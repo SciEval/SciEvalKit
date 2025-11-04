@@ -6,40 +6,51 @@ from typing import List, Dict, Any, Tuple, Optional
 import os
 import pandas as pd
 import csv, sys
+from ..text_base import TextBaseDataset
+from vlmeval.smp import *
 
 try:
     csv.field_size_limit(sys.maxsize)
 except OverflowError:
     csv.field_size_limit(2**31 - 1)
 
-class ResearchbenchRetrieve:
+class ResearchbenchRetrieve(TextBaseDataset):
     MODALITY = "TEXT"
     TYPE = "TEXT"
-    NAME = "researchbench_retrieve"
-    DATASET_URL = "tos://tos-bjml-ai4scilab/scievalkit_benchmark/researchbench_all.tsv"
-    DATASET_MD5 = None
+    NAME = "ResearchbenchRetrieve"
+    DATASET_URL = {
+        'ResearchbenchRetrieve': 'https://opencompass.openxlab.space/utils/VLMEval/ResearchbenchRetrieve.tsv'
+        # TODO upload data
+    }
+
+    DATASET_MD5 = {
+        'ResearchbenchRetrieve': 'ebf4ed3a14b8e0975691d7980b9a93db'
+    }
     dataset = NAME
     @property
     def dataset_name(self) -> str:
         return getattr(self, "dataset", self.NAME)
     def __len__(self) -> int:
-        return len(self.df_eval)
+        return len(self.data)
     def get_prompt(self, idx: int):
         return self.build_prompt(idx)
-    @classmethod
-    def supported_datasets(cls):
-        return {cls.DATASET_URL: cls}
+
     def __init__(self,
-                 tsv_path: str,
+                 tsv_path: str |None = None,
                  require_eval_flag: bool = True,
                  use_abstract: bool = True,
                  abstract_maxlen: int = 220, dataset: Optional[str] = None):
-        self.tsv_path = tsv_path
+        self.prepare_tsv(self.DATASET_URL[dataset], self.DATASET_MD5[dataset])
+        data_root = LMUDataRoot()
+        os.makedirs(data_root, exist_ok=True)
+        file_name = self.DATASET_URL[self.dataset_name].split('/')[-1]
+        data_path = osp.join(data_root, file_name)
+        self.tsv_path = tsv_path if tsv_path is not None else data_path
         self.require_eval_flag = require_eval_flag
         self.use_abstract = use_abstract
         self.abstract_maxlen = abstract_maxlen
         self.dataset = dataset or self.NAME
-        self.df = pd.read_csv(tsv_path, sep="\t", dtype=str, engine="c")
+        self.df = pd.read_csv(self.tsv_path, sep="\t", dtype=str, engine="c")
         needed = [
             "sample_id", "category", "doi", "normalized_doi",
             "use_in_eval", "weight",
@@ -342,6 +353,10 @@ class ResearchbenchRetrieve:
         else:
             hit1 = float(pd.Series(hit1_col).mean())
             hit3 = float(pd.Series(hit3_col).mean())
+        out_dir = os.path.dirname(eval_file)
+        os.makedirs(out_dir, exist_ok=True)
+        base = os.path.splitext(os.path.basename(eval_file))[0]
+        save_detail = os.path.join(out_dir, f"{base}_judge.csv")
         if save_detail:
             cols = [
                 "sample_id", "category", "doi", "use_in_eval", "weight",
@@ -352,10 +367,15 @@ class ResearchbenchRetrieve:
                 out.to_excel(save_detail, index=False)
             else:
                 out.to_csv(save_detail, index=False, encoding="utf-8-sig")
-        return {
+        result_file_path = os.path.join(out_dir, f"{base}_eval.json")
+        eval_result = {
             "dataset": self.NAME,
             "size": len(self.df_eval),
             "weighted": weighted,
             "hit@1": round(hit1, 6),
             "hit@3": round(hit3, 6),
         }
+        # 将字典数据写入 JSON 文件
+        with open(result_file_path, "w") as f:
+            json.dump(eval_result, f, indent=4)
+        return eval_result
