@@ -84,6 +84,10 @@ from .mmhelix import MMHELIX
 from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
+from .bioprobench_pqa import BioProBench_PQA
+from .bioprobench_err import BioProBench_ERR 
+from .bioprobench_ord import BioProBench_ORD 
+from .bioprobench_gen import BioProBench_GEN
 
 
 class ConcatDataset(ImageBaseDataset):
@@ -226,9 +230,9 @@ VIDEO_DATASET = [
     Video_Holmes, VCRBench, CGAVCounting,
     EgoExoBench_MCQ,
 ]
-
+############
 TEXT_DATASET = [
-    TextMCQDataset
+    TextMCQDataset, BioProBench_PQA, BioProBench_ERR, BioProBench_ORD, BioProBench_GEN
 ]
 
 CUSTOM_DATASET = [
