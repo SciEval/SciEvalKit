@@ -84,6 +84,7 @@ from .mmhelix import MMHELIX
 from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
+from .trqa import TRQA
 
 
 class ConcatDataset(ImageBaseDataset):
@@ -228,7 +229,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset
+    TextMCQDataset, TRQA
 ]
 
 CUSTOM_DATASET = [
