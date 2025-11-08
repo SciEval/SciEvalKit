@@ -84,6 +84,7 @@ from .mmhelix import MMHELIX
 from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
+from .bioinstruction import Bioinstruction
 
 
 class ConcatDataset(ImageBaseDataset):
@@ -103,6 +104,9 @@ class ConcatDataset(ImageBaseDataset):
         'ScreenSpot': ['ScreenSpot_Mobile', 'ScreenSpot_Desktop', 'ScreenSpot_Web'],
         'ScreenSpot_v2': ['ScreenSpot_v2_Mobile', 'ScreenSpot_v2_Desktop', 'ScreenSpot_v2_Web'],
         'M4Bench': ['State_Invariance', 'State_Comparison', 'Spatial_Perception', 'Instance_Comparison', 'Detailed_Difference'],  # noqa: E501
+        'Bioinstruction':['Thermostability','sirnaEfficiency','Fluorescence','Isoform','MeanRibosomeLoading','CRISPROnTarget','Stability',
+                    'promoter_enhancer_interaction','rna_protein_interaction','emp','Solubility','tf_m','antibody_antigen',
+                    'NoncodingRNAFamily','ProgrammableRNASwitches','Modification','FunctionEC','enhancer_activity']
     }
 
     def __init__(self, dataset):
@@ -228,7 +232,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset
+    TextMCQDataset,Bioinstruction
 ]
 
 CUSTOM_DATASET = [
