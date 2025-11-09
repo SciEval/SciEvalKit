@@ -7,6 +7,8 @@ from ..smp import *
 from .text_base import TextBaseDataset
 from .utils.bioinstruction import *
 
+
+
 class Bioinstruction(TextBaseDataset):
     TYPE = 'TEXT'
     DATASET_URL = {
@@ -47,32 +49,32 @@ class Bioinstruction(TextBaseDataset):
     regression_spearman=['Stability','Fluorescence','Thermostability','CRISPROnTarget']
     regression_r2=['MeanRibosomeLoading','Isoform']
     regression_task= regression_spearman+regression_r2+['sirnaEfficiency']
-    binary_classification_acc=['Solubility']  
+    binary_classification_acc=['Solubility']
     binary_classification_mcc=['antibody_antigen','rna_protein_interaction','emp','tf_m','promoter_enhancer_interaction']
     binary_classification_task=binary_classification_mcc+binary_classification_acc
     multi_task=['ProgrammableRNASwitches','Modification','FunctionEC','enhancer_activity']
 
- 
+
     def process_regression_task(task_entries):
         result_values = []
         label_values = []
-        task_processed_data = [] 
+        task_processed_data = []
         num_all=len(task_entries)
         for index,entry in task_entries.iterrows():
-            extracted_result = extract_numeric_values(entry["prediction"]) 
+            extracted_result = extract_numeric_values(entry["prediction"])
             label = float(entry["category"])
             if len(extracted_result) == 0:
-                result_values.append(np.inf)   
+                result_values.append(np.inf)
             else:
-                result_values.append(extracted_result[-1]) 
+                result_values.append(extracted_result[-1])
             label_values.append(label)
         return label_values, result_values
-    
+
     def process_binary_classification_task(task_entries):
         label_classes = []
         result_classes = []
-        task_processed_data = [] 
-        entries_for_model = [] 
+        task_processed_data = []
+        entries_for_model = []
         num_all=len(task_entries)
         for index,entry in task_entries.iterrows():
             label_class = 1 if entry["category"] == 'positive' else 0
@@ -90,15 +92,15 @@ class Bioinstruction(TextBaseDataset):
                 else:
                     if model_output and model_output.strip():
                         entries_for_model.append({"index": index, "text": model_output})
-                    else:         
+                    else:
                         result_class = 1 - label_class
             task_processed_data.append({
             "input": entry["question"],
             "original_label": entry["category"],
             "processed_label": label_class,
             "original_model_output": model_output,
-            "processed_model_output": result_class, # 可能为None，后面会填充
-            "score": "N/A" 
+            "processed_model_output": result_class, 
+            "score": "N/A"
         })
         if entries_for_model:
             texts_to_classify = [item['text'] for item in entries_for_model]
@@ -122,7 +124,7 @@ class Bioinstruction(TextBaseDataset):
         label_values = []
         data = load(eval_file)
         data= data[~pd.isna(data["prediction"])]
-        assert 'answer' in data and 'prediction' in data 
+        assert 'answer' in data and 'prediction' in data
         dataset_name = None
         for name in self.DATASET_URL:
             if name in eval_file:
@@ -162,4 +164,4 @@ class Bioinstruction(TextBaseDataset):
         else:
             print('Error Task!')
             pass
-        return 
+        return
