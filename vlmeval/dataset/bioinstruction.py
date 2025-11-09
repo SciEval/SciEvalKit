@@ -12,26 +12,26 @@ from .utils.bioinstruction import *
 class Bioinstruction(TextBaseDataset):
     TYPE = 'TEXT'
     DATASET_URL = {
-        'sirnaEfficiency': '',
-        'Thermostability':'',
-        'Fluorescence':'',
-        'Isoform':'',
-        'MeanRibosomeLoading':'',
-        'CRISPROnTarget':'',
-        'Stability':'',
+        'sirnaEfficiency': '/scievalkit_benchmark/Bioinstruction/sirnaEfficiency.tsv'',
+        'Thermostability':'/scievalkit_benchmark/Bioinstruction/Thermostability.tsv'',
+        'Fluorescence':'/scievalkit_benchmark/Bioinstruction/Fluorescence.tsv'',
+        'Isoform':'/scievalkit_benchmark/Bioinstruction/Isoform.tsv'',
+        'MeanRibosomeLoading':'/scievalkit_benchmark/Bioinstruction/MeanRibosomeLoading.tsv'',
+        'CRISPROnTarget':'/scievalkit_benchmark/Bioinstruction/CRISPROnTarget.tsv'',
+        'Stability':'/scievalkit_benchmark/Bioinstruction/Stability.tsv'',
 
-        'promoter_enhancer_interaction':'',
-        'rna_protein_interaction':'',
-        'emp':'',
-        'Solubility':"",
-        'tf_m':'',
-        'antibody_antigen':'',
+        'promoter_enhancer_interaction':'/scievalkit_benchmark/Bioinstruction/promoter_enhancer_interaction.tsv'',
+        'rna_protein_interaction':'/scievalkit_benchmark/Bioinstruction/rna_protein_interaction.tsv'',
+        'emp':'/scievalkit_benchmark/Bioinstruction/emp.tsv'',
+        'Solubility':"/scievalkit_benchmark/Bioinstruction/Solubility.tsv'",
+        'tf_m':'/scievalkit_benchmark/Bioinstruction/tf_m.tsv'',
+        'antibody_antigen':'/scievalkit_benchmark/Bioinstruction/antibody_antigen.tsv',
 
-        'NoncodingRNAFamily':'',
-        'ProgrammableRNASwitches':'',
-        'Modification':'',
-        'FunctionEC':'',
-        'enhancer_activity':''
+        'NoncodingRNAFamily':'/scievalkit_benchmark/Bioinstruction/NoncodingRNAFamily.tsv'',
+        'ProgrammableRNASwitches':'/scievalkit_benchmark/Bioinstruction/ProgrammableRNASwitches.tsv'',
+        'Modification':'/scievalkit_benchmark/Bioinstruction/Modification.tsv'',
+        'FunctionEC':'/scievalkit_benchmark/Bioinstruction/FunctionEC.tsv'',
+        'enhancer_activity':'/scievalkit_benchmark/Bioinstruction/enhancer_activity.tsv''
     }
     DATASET_MD5 = {
         'sirnaEfficiency': '',
@@ -118,7 +118,7 @@ class Bioinstruction(TextBaseDataset):
     # It returns a DataFrame
     @classmethod
     def evaluate(self, eval_file, **judge_kwargs):
-        with open("ec_labels.json", "r") as f:
+        with open("/scievalkit_benchmark/Bioinstruction/ec_labels.json", "r") as f:
             ec_labels = json.load(f)
         result_values = []
         label_values = []
