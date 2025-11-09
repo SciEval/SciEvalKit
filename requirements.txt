@@ -38,3 +38,9 @@ transformers
 typing_extensions
 validators
 xlsxwriter
+# TODO: newly added dependencies
+datasets
+rdkit
+rdchiral
+rouge_score
+scikit-learn

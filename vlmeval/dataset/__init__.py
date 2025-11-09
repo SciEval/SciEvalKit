@@ -84,6 +84,7 @@ from .mmhelix import MMHELIX
 from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
+from .llm4chem import LLM4Chem
 
 
 class ConcatDataset(ImageBaseDataset):
@@ -103,6 +104,7 @@ class ConcatDataset(ImageBaseDataset):
         'ScreenSpot': ['ScreenSpot_Mobile', 'ScreenSpot_Desktop', 'ScreenSpot_Web'],
         'ScreenSpot_v2': ['ScreenSpot_v2_Mobile', 'ScreenSpot_v2_Desktop', 'ScreenSpot_v2_Web'],
         'M4Bench': ['State_Invariance', 'State_Comparison', 'Spatial_Perception', 'Instance_Comparison', 'Detailed_Difference'],  # noqa: E501
+        'LLM4Chem' : ['forward_synthesis', 'retrosynthesis', 'molecule_captioning', 'molecule_generation', 'name_conversion-i2f', 'name_conversion-i2s', 'name_conversion-s2f', 'name_conversion-s2i', 'property_prediction-esol', 'property_prediction-lipo', 'property_prediction-bbbp', 'property_prediction-clintox', 'property_prediction-hiv', 'property_prediction-sider', 'retrosynthesis_uspto50k'],
     }
 
     def __init__(self, dataset):
@@ -228,7 +230,8 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset
+    TextMCQDataset,
+    LLM4Chem,
 ]
 
 CUSTOM_DATASET = [
