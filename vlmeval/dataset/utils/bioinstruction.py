@@ -53,7 +53,7 @@ def classify_by_keywords(text):
 
 
 def classify_by_sentiment_model(text):
-    classifier  = pipeline("zero-shot-classification", model="/path/")
+    classifier  = pipeline("zero-shot-classification", model="/scievalkit_benchmark/Bioinstruction/bart_large_mnli")
 
 
     text = [str(t).replace("</s>", "").replace("<pad>", "").strip() for t in text]
