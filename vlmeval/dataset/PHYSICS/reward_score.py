@@ -32,7 +32,7 @@ import sympy
 from sympy import N, Pow, Mul
 from sympy.parsing import sympy_parser
 from math_verify import (ExprExtractionConfig, LatexExtractionConfig, parse, verify)
-
+import wrapt_timeout_decorator
 
 def timeout(timeout_seconds: int = 10):
     if os.name == "posix":
@@ -642,7 +642,7 @@ def handle_pi(string, pi):
 
     return string
 
-@timeout(timeout_seconds=30)
+@wrapt_timeout_decorator.timeout(30)
 def are_equal_under_sympy(gold: str, pred: str, precision: float = 5e-3):
     def is_scientific_notation(expr):
         return (
