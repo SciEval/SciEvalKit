@@ -192,7 +192,7 @@ def infer_data_job(
     prev_file = f'{work_dir}/{model_name}_{dataset_name}_PREV.pkl'
     if osp.exists(result_file):
         if rank == 0:
-            data = load(result_file)
+            data = pd.DataFrame(load(result_file))
             # breakpoint()
             results = {k: v for k, v in zip(data['index'], data['prediction'])}
             if not ignore_failed:

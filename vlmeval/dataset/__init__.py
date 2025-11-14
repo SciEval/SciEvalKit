@@ -55,7 +55,6 @@ from .sfebench import SFE
 from .earthsebench import EarthSE
 from .visfactor import VisFactor
 from .ost_bench import OSTDataset
-from .climaqa import Clima_QA
 
 from .EgoExoBench.egoexobench import EgoExoBench_MCQ
 
@@ -73,7 +72,6 @@ from .utils import *
 from .video_dataset_config import *
 from ..smp import *
 from .OmniDocBench.omnidocbench import OmniDocBench
-from .CMPhysBench.cmphysbench import CMPhysBench
 from .moat import MOAT
 from .GUI.screenspot import ScreenSpot
 from .GUI.screenspot_v2 import ScreenSpotV2
@@ -86,7 +84,6 @@ from .mmhelix import MMHELIX
 from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
-from .PHYSICS.PHYSICS import PHYSICS
 from .mascqa import MaScQA
 from .SciCode.scicode import SciCode
 from .Researchbench.generate import ResearchbenchGenerate
@@ -94,6 +91,7 @@ from .Researchbench.rank import ResearchbenchRank
 from .Researchbench.retrieve import  ResearchbenchRetrieve
 from .trqa import TRQA
 from .ChemBench.chembench import ChemBench
+from .AstroVisBench.AstroVisBench import AstroVisBench
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -221,7 +219,7 @@ IMAGE_DATASET = [
     MMEReasoning, GOBenchDataset, SFE, EarthSE, ChartMimic, MMVMBench, XLRSBench,
     OmniEarthMCQBench, VisFactor, OSTDataset, OCRBench_v2, TreeBench, CVQA, M4Bench,
     AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset,
-    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, SLAKE_EN_TEST, Clima_QA, ChemBench
+    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, SLAKE_EN_TEST, Clima_QA, ChemBench, AstroVisBench
 ]
 
 VIDEO_DATASET = [
