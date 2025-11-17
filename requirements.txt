@@ -38,3 +38,11 @@ transformers
 typing_extensions
 validators
 xlsxwriter
+evaluate
+bert_score
+rouge
+rdkit
+rouge_score
+selfies
+Levenshtein
+Bio

@@ -32,6 +32,7 @@ class TextBaseDataset:
         update_flag = False
         file_name = url.split('/')[-1]
         data_path = osp.join(data_root, file_name)
+
         if osp.exists(data_path) and (file_md5 is None or md5(data_path) == file_md5):
             pass
         else:

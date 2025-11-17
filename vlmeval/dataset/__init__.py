@@ -85,6 +85,9 @@ from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
 
+from .mol_instructions import Mol_Instructions
+from .PEER import PEER
+
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -103,6 +106,27 @@ class ConcatDataset(ImageBaseDataset):
         'ScreenSpot': ['ScreenSpot_Mobile', 'ScreenSpot_Desktop', 'ScreenSpot_Web'],
         'ScreenSpot_v2': ['ScreenSpot_v2_Mobile', 'ScreenSpot_v2_Desktop', 'ScreenSpot_v2_Web'],
         'M4Bench': ['State_Invariance', 'State_Comparison', 'Spatial_Perception', 'Instance_Comparison', 'Detailed_Difference'],  # noqa: E501
+        'Mol_Instructions': [
+            'chemical_disease_interaction_extraction', 'chemical_entity_recognition', 'chemical_protein_interaction_extraction',
+            'multi_choice_question', 'open_question', 'true_or_false_question',
+            'property_prediction_str',
+            'description_guided_molecule_design',
+            'forward_reaction_prediction',
+            'retrosynthesis',
+            'reagent_prediction',
+            'molecular_description_generation',
+            'catalytic_activity',
+            'domain_motif',
+            'general_function',
+            'protein_function',
+            'protein_design'
+        ],
+        'PEER': [
+            # 'solubility',
+            'stability',
+            # 'human_ppi',
+            # 'yeast_ppi'
+        ]
     }
 
     def __init__(self, dataset):
@@ -228,7 +252,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset
+    TextMCQDataset, Mol_Instructions, PEER
 ]
 
 CUSTOM_DATASET = [
