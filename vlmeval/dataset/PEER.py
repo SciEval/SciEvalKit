@@ -5,7 +5,7 @@ from abc import abstractmethod
 from sklearn.metrics import matthews_corrcoef, accuracy_score, r2_score, roc_auc_score, precision_score, recall_score, mean_absolute_error
 from ..smp import *
 from .text_base import TextBaseDataset
-from .utils.PEER.peer import *    #导入辅助函数
+from .utils.PEER.peer import *    
 import numpy as np
 import openai
 import time
@@ -114,7 +114,7 @@ class PEER(TextBaseDataset):
         'human_ppi': None,
         'yeast_ppi': None
 
-    }#MD5码暂时不需要，先置空
+    }
 
 
     protein_tasks = [
@@ -198,20 +198,18 @@ class PEER(TextBaseDataset):
             try:
                 text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
                 text = re.sub(r'.*?</think>\s*', '', text, flags=re.DOTALL)
-                # 提取文本中的数字
+
                 match = re.search(r'[-+]?\d*\.\d+|\d+', text)
                 if match:
                     value = float(match.group(0))
-                    # 比较数值
+
                     if value > compare_number:
                         return "Yes"
                     else:
                         return "No"
                 else:
-                    # 如果没有找到数字，返回空字符串
                     return ""
             except ValueError:
-                # 如果转换失败，返回空字符串
                 return ""
 
         for index, entry in data.iterrows():
@@ -294,8 +292,6 @@ class PEER(TextBaseDataset):
 
             if pred_bin == gold_bin:
                 num_correct += 1
-                # import pdb; pdb.set_trace()
-                print(references[i][0],'\n',predictions[i][0],'----')
                 new_pred.append(pred_bin)
                 new_gold.append(gold_bin)
             else:
