@@ -122,10 +122,10 @@ class ConcatDataset(ImageBaseDataset):
             'protein_design'
         ],
         'PEER': [
-            # 'solubility',
+            'solubility',
             'stability',
-            # 'human_ppi',
-            # 'yeast_ppi'
+            'human_ppi',
+            'yeast_ppi'
         ]
     }
 
