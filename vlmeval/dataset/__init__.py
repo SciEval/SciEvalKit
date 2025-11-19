@@ -85,6 +85,8 @@ from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
 
+from .opi import OPI
+
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -103,6 +105,16 @@ class ConcatDataset(ImageBaseDataset):
         'ScreenSpot': ['ScreenSpot_Mobile', 'ScreenSpot_Desktop', 'ScreenSpot_Web'],
         'ScreenSpot_v2': ['ScreenSpot_v2_Mobile', 'ScreenSpot_v2_Desktop', 'ScreenSpot_v2_Web'],
         'M4Bench': ['State_Invariance', 'State_Comparison', 'Spatial_Perception', 'Instance_Comparison', 'Detailed_Difference'],  # noqa: E501
+        'OPI': [
+            'EC_number_CLEAN_EC_number_new', 'EC_number_CLEAN_EC_number_price',
+            'Fold_type_fold_type',
+            'Function_CASPSimilarSeq_function', 'Function_IDFilterSeq_function', 'Function_UniProtSeq_function',
+            'gName2Cancer_gene_name_to_cancer',
+            'GO_CASPSimilarSeq_go', 'GO_IDFilterSeq_go', 'GO_UniProtSeq_go',
+            'gSymbol2Cancer_gene_symbol_to_cancer', 'gSymbol2Tissue_gene_symbol_to_tissue',
+            'Keywords_CASPSimilarSeq_keywords', 'Keywords_IDFilterSeq_keywords', 'Keywords_UniProtSeq_keywords',
+            'Subcellular_localization_subcell_loc'
+        ],
     }
 
     def __init__(self, dataset):
