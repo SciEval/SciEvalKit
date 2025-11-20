@@ -14,7 +14,7 @@ from .image_vqa import (
     ImageVQADataset, MathVision, OCRBench, MathVista, LLaVABench, LLaVABench_KO, VGRPBench, MMVet, MTVQADataset,
     TableVQABench, CustomVQADataset, CRPE, MathVerse, OlympiadBench, SeePhys, QSpatial, VizWiz, MMNIAH, LogicVista,
     MME_CoT, MMSci_Captioning, Physics_yale, TDBenchGrounding, WildDocBenchmark, OCR_Reasoning, PhyX, CountBenchQA,
-    ZEROBench, Omni3DBench, TallyQA, MMEReasoning, MMVMBench, BMMR, OCRBench_v2, AyaVisionBench
+    ZEROBench, Omni3DBench, TallyQA, MMEReasoning, MMVMBench, BMMR, OCRBench_v2, AyaVisionBench, MathCanvas
 )
 
 from .image_ccocr import CCOCRDataset
@@ -30,6 +30,9 @@ from .vlm2bench import VLM2Bench
 from .vlmbias import VLMBias
 from .spatial457 import Spatial457
 from .charxiv import CharXiv
+from .chartmuseum import ChartMuseum
+from .chartqapro import ChartQAPro
+from .refcoco import RefCOCODataset
 
 from .mmbench_video import MMBenchVideo
 from .videomme import VideoMME
@@ -52,11 +55,11 @@ from .vdc import VDC
 from .vcrbench import VCRBench
 from .gobench import GOBenchDataset
 from .sfebench import SFE
-from .earthsebench import EarthSE
 from .visfactor import VisFactor
 from .ost_bench import OSTDataset
 
 from .EgoExoBench.egoexobench import EgoExoBench_MCQ
+from .videott import VideoTT
 
 from .worldsense import WorldSense
 from .qbench_video import QBench_Video, QBench_Video_MCQ, QBench_Video_VQA
@@ -79,12 +82,19 @@ from .GUI.screenspot_pro import ScreenSpot_Pro
 from .mmifeval import MMIFEval
 from .chartmimic import ChartMimic
 from .m4bench import M4Bench
+from .vlrmbench import VLRMBench
 from .mmhelix import MMHELIX
-
 from .medqbench_mcq import MedqbenchMCQDataset
 from .medqbench_caption import MedqbenchCaptionDataset
 from .medqbench_paired_description import MedqbenchPairedDescriptionDataset
+from .olmOCRBench.olmocrbench import olmOCRBench
+from .oceanocr import OceanOCRBench
+from .matbench import MATBench
 
+from .reasonmap_plus import ReasonMap_Plus
+from .gsm8k_v import GSM8KVDataset
+from .bulks_mat import BulkModulus2Material
+from .comp_mat import Composition2Material
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -103,6 +113,7 @@ class ConcatDataset(ImageBaseDataset):
         'ScreenSpot': ['ScreenSpot_Mobile', 'ScreenSpot_Desktop', 'ScreenSpot_Web'],
         'ScreenSpot_v2': ['ScreenSpot_v2_Mobile', 'ScreenSpot_v2_Desktop', 'ScreenSpot_v2_Web'],
         'M4Bench': ['State_Invariance', 'State_Comparison', 'Spatial_Perception', 'Instance_Comparison', 'Detailed_Difference'],  # noqa: E501
+        'BulkModulus2Material': ['bulk_modulus2material_no_coords_train'],
     }
 
     def __init__(self, dataset):
@@ -200,7 +211,7 @@ IMAGE_DATASET = [
     MTVQADataset, TableVQABench, MMLongBench, VCRDataset, MMDUDataset, DUDE,
     SlideVQA, MUIRDataset, CCOCRDataset, GMAIMMBenchDataset, MMERealWorld,
     HRBenchDataset, CRPE, MathVerse, NaturalBenchDataset, MIABench,
-    OlympiadBench, SeePhys,WildVision, MMMath, QSpatial, Dynamath, MMGenBench, VizWiz,
+    OlympiadBench, SeePhys,WildVision, MMMath, QSpatial, Dynamath, GSM8KVDataset, MMGenBench, VizWiz,
     MMNIAH, CMMMU, VLRewardBench, WeMath, LogicVista, MMMUProDataset,
     CreationMMBenchDataset, ImageShortQADataset, MMAlignBench, OmniDocBench,
     VLM2Bench, VMCBenchDataset, EMMADataset, MME_CoT, MOAT, MedXpertQA_MM_test,
@@ -209,10 +220,11 @@ IMAGE_DATASET = [
     PathVQA_TEST, TDBench, TDBenchGrounding, MicroBench, CharXiv, OmniMedVQA,
     WildDocBenchmark, MSEarthMCQ, OCR_Reasoning, PhyX, VLMBlind, CountBenchQA,
     ZEROBench, SCAM, Omni3DBench, TallyQA, _3DSRBench, BMMR, AffordanceDataset,
-    MMEReasoning, GOBenchDataset, SFE, EarthSE, ChartMimic, MMVMBench, XLRSBench,
+    MMEReasoning, GOBenchDataset, SFE, ChartMimic, MMVMBench, XLRSBench,
     OmniEarthMCQBench, VisFactor, OSTDataset, OCRBench_v2, TreeBench, CVQA, M4Bench,
-    AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset,
-    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset
+    AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset, MathCanvas,
+    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, ChartMuseum, ChartQAPro, ReasonMap_Plus,
+    olmOCRBench, OceanOCRBench, MATBench, VLRMBench, RefCOCODataset
 ]
 
 VIDEO_DATASET = [
@@ -224,11 +236,13 @@ VIDEO_DATASET = [
     QBench_Video, QBench_Video_MCQ, QBench_Video_VQA,
     Video_MMLU_CAP, Video_MMLU_QA,
     Video_Holmes, VCRBench, CGAVCounting,
-    EgoExoBench_MCQ,
+    EgoExoBench_MCQ, VideoTT,
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset
+    TextMCQDataset,
+    BulkModulus2Material,
+    Composition2Material
 ]
 
 CUSTOM_DATASET = [
