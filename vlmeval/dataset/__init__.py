@@ -92,6 +92,8 @@ from .SciCode.scicode import SciCode
 from .Researchbench.generate import ResearchbenchGenerate
 from .Researchbench.rank import ResearchbenchRank
 from .Researchbench.retrieve import  ResearchbenchRetrieve
+from .trqa import TRQA
+
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -235,7 +237,7 @@ VIDEO_DATASET = [
 ]
 
 TEXT_DATASET = [
-    TextMCQDataset,ResearchbenchGenerate,ResearchbenchRank,ResearchbenchRetrieve, PHYSICS, MaScQA, SciCode, ProteinLMBench
+    TextMCQDataset,ResearchbenchGenerate,ResearchbenchRank,ResearchbenchRetrieve, PHYSICS, MaScQA, SciCode, ProteinLMBench, TRQA
 ]
 
 CUSTOM_DATASET = [
