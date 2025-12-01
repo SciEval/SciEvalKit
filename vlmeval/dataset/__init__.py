@@ -93,7 +93,7 @@ from .Researchbench.generate import ResearchbenchGenerate
 from .Researchbench.rank import ResearchbenchRank
 from .Researchbench.retrieve import  ResearchbenchRetrieve
 from .trqa import TRQA
-
+from .ChemBench.chembench import ChemBench
 
 class ConcatDataset(ImageBaseDataset):
     # This dataset takes multiple dataset names as input and aggregate them into a single dataset.
@@ -221,7 +221,7 @@ IMAGE_DATASET = [
     MMEReasoning, GOBenchDataset, SFE, EarthSE, ChartMimic, MMVMBench, XLRSBench,
     OmniEarthMCQBench, VisFactor, OSTDataset, OCRBench_v2, TreeBench, CVQA, M4Bench,
     AyaVisionBench, TopViewRS, VLMBias, MMHELIX, MedqbenchMCQDataset,
-    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, SLAKE_EN_TEST, Clima_QA
+    MedqbenchPairedDescriptionDataset, MedqbenchCaptionDataset, SLAKE_EN_TEST, Clima_QA, ChemBench
 ]
 
 VIDEO_DATASET = [
