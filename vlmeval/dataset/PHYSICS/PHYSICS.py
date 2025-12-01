@@ -9,6 +9,7 @@ from .reward_score  import compute_score
 import signal
 from contextlib import contextmanager
 from .reward_score import Model_args
+import wrapt_timeout_decorator
 
 
 def generate_score_report(jsonl_file_path: str):
@@ -77,6 +78,7 @@ def generate_score_report(jsonl_file_path: str):
         print(f"报告生成成功！已保存至: {report_path}")
     except Exception as e:
         print(f"写入报告文件时发生错误: {e}")
+
 
 @contextmanager
 def timeout(seconds):
@@ -163,20 +165,48 @@ class PHYSICS(TextBaseDataset):
         model_args.temperature = judge_kwargs['model_args']['temperature']
 
         data = load(eval_file)
-        for item in tqdm(data.iterrows(), desc="Scoring"):
-            # result = compute_score(item['model_output'], item['ground_truth'], item['problem']) # olympiadbench
+        # iterrows 返回的是 (index, Series) 元组
+        for index, row in tqdm(data.iterrows(), desc="Scoring", total=len(data)):
             try:
-                with timeout(30):
-                    item = item[1].to_dict()
+                # 调用被装饰的函数
+                self.process_single_item(row, model_args, output_path)
 
-                    result = compute_score(item['prediction'], item['answer'], item['question'], model_args = model_args)
-                    item['rule_based_acc'] = result['rule_based_acc']
-                    item['acc'] = result['acc']
-                    item['extracted_gt'] = result['extracted_gt']
-                    item['extracted_pred'] = result['extracted_pred']
-                    self.write_jsonl(output_path, item, mode='a')
             except TimeoutError:
-                print(f"Timeout processing item: {item.get('question', 'Unknown')}")
+                # wrapt_timeout_decorator 超时会抛出 TimeoutError
+                # 注意：这里 row 是 Series，获取值建议用 .get() 或 []
+                question_text = row.get('question', 'Unknown')
+                print(f"Timeout processing item: {question_text}")
+                continue
+
+            except Exception as e:
+                # 捕获其他可能的错误，防止程序中断
+                print(f"Error processing item: {e}")
                 continue
         generate_score_report(output_path)
         return eval_file
+
+    @wrapt_timeout_decorator.timeout(30)
+    def process_single_item(self, row, model_args, output_path):
+        """
+        处理单条数据的方法，被装饰器限制运行时间最多 30 秒。
+        注意：row 是 pandas 的 Series 对象。
+        """
+        # 将 Series 转为 dict
+        item = row.to_dict()
+
+        # 计算分数
+        result = compute_score(
+            item['prediction'],
+            item['answer'],
+            item['question'],
+            model_args=model_args
+        )
+
+        # 更新 item
+        item['rule_based_acc'] = result['rule_based_acc']
+        item['acc'] = result['acc']
+        item['extracted_gt'] = result['extracted_gt']
+        item['extracted_pred'] = result['extracted_pred']
+
+        # 写入文件
+        self.write_jsonl(output_path, item, mode='a')
