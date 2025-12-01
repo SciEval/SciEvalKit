@@ -239,17 +239,38 @@ class OpenAIWrapper(BaseAPI):
 
         for attempt in range(max_retries):
             try:
+                payload['stream'] = True
                 response = requests.post(
                     self.api_base,
-                    headers=headers, data=json.dumps(payload), timeout=self.timeout * 1.1)
+                    headers=headers, data=json.dumps(payload), timeout=self.timeout * 1.1,
+                    stream=True ,# 开启流式
+                    verify=False
+                )
 
                 response.raise_for_status()
-                resp_struct = json.loads(response.text)
-                answer = resp_struct['choices'][0]['message']['content'].strip()
-                if resp_struct['choices'][0]['finish_reason'] == 'refusal':
-                    answer = "Refusal response from API"
+
+                full_answer = ""
                 ret_code = 0
-                return ret_code, answer, response
+
+                # 循环接收并拼接
+                for line in response.iter_lines():
+                    if line:
+                        decoded_line = line.decode('utf-8')
+                        if decoded_line.startswith('data: '):
+                            data_str = decoded_line[6:]
+                            if data_str.strip() == '[DONE]':
+                                break
+                            try:
+                                chunk = json.loads(data_str)
+                                delta_content = chunk['choices'][0].get('delta', {}).get('content', '')
+                                if delta_content:
+                                    # print(delta_content, end="", flush=True) # 实时打印到控制台
+                                    full_answer += delta_content # 拼接到最终结果
+                            except:
+                                pass
+
+                # print() # 换行
+                return ret_code, full_answer, response
             except Exception as err:
                 last_exception = err
 
