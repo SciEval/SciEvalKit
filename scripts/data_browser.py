@@ -16,8 +16,8 @@ from io import BytesIO
 from argparse import Namespace
 # from llava import conversation as conversation_lib
 from typing import Sequence
-from vlmeval import *
-from vlmeval.dataset import SUPPORTED_DATASETS, build_dataset
+from scieval import *
+from scieval.dataset import SUPPORTED_DATASETS, build_dataset
 
 SYS = "You are a helpful assistant. Your job is to faithfully translate all provided text into Chinese faithfully. "
 

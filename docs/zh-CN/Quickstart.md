@@ -95,7 +95,7 @@ torchrun --nproc-per-node=2 run.py --data MME --model qwen_chat --verbose
 # 使用 `python` 运行时，只实例化一个 VLM，并且它可能使用多个 GPU。
 # 这推荐用于评估参数量非常大的 VLMs（如 IDEFICS-80B-Instruct）。
 
-# 在 MMBench-Video 上评测 IDEFCIS2-8B, 视频采样 8 帧作为输入，不采用 pack 模式评测. MMBench_Video_8frame_nopack 是一个定义在 `vlmeval/dataset/video_dataset_config.py` 的数据集设定.
+# 在 MMBench-Video 上评测 IDEFCIS2-8B, 视频采样 8 帧作为输入，不采用 pack 模式评测. MMBench_Video_8frame_nopack 是一个定义在 `scieval/dataset/video_dataset_config.py` 的数据集设定.
 torchrun --nproc-per-node=8 run.py --data MMBench_Video_8frame_nopack --model idefics2_8
 # 在 MMBench-Video 上评测 GPT-4o (API 模型), 视频采样每秒一帧作为输入，采用 pack 模式评测
 python run.py --data MMBench_Video_1fps_pack --model GPT4o

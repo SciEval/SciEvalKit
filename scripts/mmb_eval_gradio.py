@@ -1,6 +1,6 @@
-from vlmeval.smp import *
-from vlmeval.tools import EVAL
-from vlmeval.dataset import build_dataset
+from scieval.smp import *
+from scieval.tools import EVAL
+from scieval.dataset import build_dataset
 import gradio as gr
 
 HEADER = """

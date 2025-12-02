@@ -36,7 +36,7 @@ English | [简体中文](/docs/zh-CN/README_zh-CN.md) | [日本語](/docs/ja/REA
 - **[2025-07-07]** Supported [**SeePhys**](https://seephys.github.io/), which is a ​full spectrum multimodal benchmark for evaluating physics reasoning across different knowledge levels. thanks to [**Quinn777**](https://github.com/Quinn777) 🔥🔥🔥
 - **[2025-07-02]** Supported [**OvisU1**](https://huggingface.co/AIDC-AI/Ovis-U1-3B), thanks to [**liyang-7**](https://github.com/liyang-7) 🔥🔥🔥
 - **[2025-06-16]** Supported [**PhyX**](https://phyx-bench.github.io/), a benchmark aiming to assess capacity for physics-grounded reasoning in visual scenarios. 🔥🔥🔥
-- **[2025-05-24]** To facilitate faster evaluations for large-scale or thinking models, **VLMEvalKit supports multi-node distributed inference** using **LMDeploy**  (supports *InternVL Series, QwenVL Series, LLaMa4*) or **VLLM**(supports *QwenVL Series, LLaMa4*). You can activate this feature by adding the ```use_lmdeploy``` or ```use_vllm``` flag to your custom model configuration in [config.py](vlmeval/config.py) . Leverage these tools to significantly speed up your evaluation workflows 🔥🔥🔥
+- **[2025-05-24]** To facilitate faster evaluations for large-scale or thinking models, **VLMEvalKit supports multi-node distributed inference** using **LMDeploy**  (supports *InternVL Series, QwenVL Series, LLaMa4*) or **VLLM**(supports *QwenVL Series, LLaMa4*). You can activate this feature by adding the ```use_lmdeploy``` or ```use_vllm``` flag to your custom model configuration in [config.py](scieval/config.py) . Leverage these tools to significantly speed up your evaluation workflows 🔥🔥🔥
 - **[2025-05-24]** Supported Models: **InternVL3 Series, Gemini-2.5-Pro, Kimi-VL, LLaMA4, NVILA, Qwen2.5-Omni, Phi4, SmolVLM2, Grok, SAIL-VL-1.5, WeThink-Qwen2.5VL-7B, Bailingmm, VLM-R1, Taichu-VLR**. Supported Benchmarks: **HLE-Bench, MMVP, MM-AlignBench, Creation-MMBench, MM-IFEval, OmniDocBench, OCR-Reasoning, EMMA, ChaXiv，MedXpertQA, Physics, MSEarthMCQ, MicroBench, MMSci, VGRP-Bench, wildDoc, TDBench, VisuLogic, CVBench, LEGO-Puzzles, Video-MMLU, QBench-Video, MME-CoT, VLM2Bench, VMCBench, MOAT, Spatial457 Benchmark**. Please refer to [**VLMEvalKit Features**](https://aicarrier.feishu.cn/wiki/Qp7wwSzQ9iK1Y6kNUJVcr6zTnPe?table=tblsdEpLieDoCxtb) for more details. Thanks to all contributors 🔥🔥🔥
 - **[2025-02-20]** Supported Models: **InternVL2.5 Series, Qwen2.5VL Series, QVQ-72B, Doubao-VL, Janus-Pro-7B, MiniCPM-o-2.6, InternVL2-MPO, LLaVA-CoT, Hunyuan-Standard-Vision, Ovis2, Valley, SAIL-VL, Ross, Long-VITA, EMU3, SmolVLM**. Supported Benchmarks: **MMMU-Pro, WeMath, 3DSRBench, LogicVista, VL-RewardBench, CC-OCR, CG-Bench, CMMMU, WorldSense**. Thanks to all contributors 🔥🔥🔥
 - **[2024-12-11]** Supported [**NaturalBench**](https://huggingface.co/datasets/BaiqiL/NaturalBench), a vision-centric VQA benchmark (NeurIPS'24) that challenges vision-language models with simple questions about natural imagery.
@@ -87,7 +87,8 @@ Note that some VLMs may not be able to run under certain flash-attention version
 
 ```python
 # Demo
-from vlmeval.config import supported_VLM
+from scieval.config import supported_VLM
+
 model = supported_VLM['idefics_9b_instruct']()
 # Forward Single Image
 ret = model.generate(['assets/apple.jpg', 'What is in this image?'])

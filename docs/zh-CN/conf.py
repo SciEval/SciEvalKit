@@ -28,7 +28,7 @@ copyright = '2023, VLMEvalKit'
 author = 'VLMEvalKit Authors'
 
 # The full version, including alpha/beta/rc tags
-version_file = '../../vlmeval/__init__.py'
+version_file = '../../scieval/__init__.py'
 
 
 def get_version():
