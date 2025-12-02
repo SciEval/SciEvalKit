@@ -38,3 +38,17 @@ transformers
 typing_extensions
 validators
 xlsxwriter
+datasets
+## clima_qa
+bert_score
+tensorflow-hub
+scikit-learn
+## CMPhysBench
+wrapt_timeout_decorator
+latex2sympy2-extended
+## PHYSICS
+pylatexenc
+math-verify
+# wrapt_timeout_decorator
+## chemBench
+loguru

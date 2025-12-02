@@ -96,7 +96,7 @@ torchrun --nproc-per-node=2 run.py --data MME --model qwen_chat --verbose
 # When running with `python`, only one VLM instance is instantiated, and it might use multiple GPUs (depending on its default behavior).
 # That is recommended for evaluating very large VLMs (like IDEFICS-80B-Instruct).
 
-# IDEFICS2-8B on MMBench-Video, with 8 frames as inputs and vanilla evaluation. On a node with 8 GPUs. MMBench_Video_8frame_nopack is a defined dataset setting in `vlmeval/dataset/video_dataset_config.py`.
+# IDEFICS2-8B on MMBench-Video, with 8 frames as inputs and vanilla evaluation. On a node with 8 GPUs. MMBench_Video_8frame_nopack is a defined dataset setting in `scieval/dataset/video_dataset_config.py`.
 torchrun --nproc-per-node=8 run.py --data MMBench_Video_8frame_nopack --model idefics2_8
 # GPT-4o (API model) on MMBench-Video, with 1 frame per second as inputs and pack evaluation (all questions of a video in a single query).
 python run.py --data MMBench_Video_1fps_pack --model GPT4o
@@ -131,7 +131,7 @@ Some models, such as Qwen2VL and InternVL, define extensive prompt-building meth
 
 ```python
 def use_custom_prompt(self, dataset: str) -> bool:
-    from vlmeval.dataset import DATASET_TYPE, DATASET_MODALITY
+    from scieval.dataset import DATASET_TYPE, DATASET_MODALITY
     dataset_type = DATASET_TYPE(dataset, default=None)
     if not self._use_custom_prompt:
         return False

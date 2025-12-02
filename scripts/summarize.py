@@ -1,5 +1,5 @@
-from vlmeval.smp import *
-from vlmeval.dataset import SUPPORTED_DATASETS
+from scieval.smp import *
+from scieval.dataset import SUPPORTED_DATASETS
 
 def get_score(model, dataset):
 

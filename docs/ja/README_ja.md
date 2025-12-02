@@ -47,7 +47,8 @@ PS: 日本語の README には最新のアップデートがすべて含まれ�
 
 ```python
 # デモ
-from vlmeval.config import supported_VLM
+from scieval.config import supported_VLM
+
 model = supported_VLM['idefics_9b_instruct']()
 # 単一画像のフォワード
 ret = model.generate(['assets/apple.jpg', 'この画像には何がありますか？'])

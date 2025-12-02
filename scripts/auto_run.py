@@ -1,6 +1,6 @@
 import argparse
-from vlmeval.smp import *
-from vlmeval.config import supported_VLM
+from scieval.smp import *
+from scieval.config import supported_VLM
 
 def is_api(x):
     return getattr(supported_VLM[x].func, 'is_api', False)
@@ -26,7 +26,7 @@ args = parser.parse_args()
 models = [x for x in models if not listinstr(['MiniGPT', 'grounding-generalist'], x)]
 
 for m in models:
-    from vlmeval.smp import get_pred_file_format
+    from scieval.smp import get_pred_file_format
     pred_format = get_pred_file_format()
     unknown_datasets = [x for x in args.data if not osp.exists(f'{m}/{m}_{x}.{pred_format}')]
     if len(unknown_datasets) == 0:

@@ -1,6 +1,6 @@
 import sys
-from vlmeval import *
-from vlmeval.dataset import SUPPORTED_DATASETS
+from scieval import *
+from scieval.dataset import SUPPORTED_DATASETS
 FAIL_MSG = 'Failed to obtain answer via API.'
 
 root = sys.argv[1]
@@ -10,7 +10,7 @@ if root[-1] in '/\\':
 model_name = root.split('/')[-1]
 
 for d in SUPPORTED_DATASETS:
-    from vlmeval.smp import get_pred_file_format
+    from scieval.smp import get_pred_file_format
     pred_format = get_pred_file_format()
     fname = f'{model_name}_{d}.{pred_format}'
     pth = osp.join(root, fname)

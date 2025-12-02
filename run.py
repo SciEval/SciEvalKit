@@ -39,34 +39,51 @@ if LOCAL_WORLD_SIZE > 1 and len(GPU_LIST):
     )
 
 
-from vlmeval.config import supported_VLM
-from vlmeval.dataset.video_dataset_config import supported_video_datasets
-from vlmeval.dataset import build_dataset
-from vlmeval.inference import infer_data_job
-from vlmeval.inference_video import infer_data_job_video
-from vlmeval.inference_mt import infer_data_job_mt
-from vlmeval.smp import *
-from vlmeval.utils.result_transfer import MMMU_result_transfer, MMTBench_result_transfer
+from scieval.config import supported_VLM
+from scieval.dataset.video_dataset_config import supported_video_datasets
+from scieval.dataset import build_dataset
+from scieval.inference import infer_data_job
+from scieval.inference_video import infer_data_job_video
+from scieval.inference_mt import infer_data_job_mt
+from scieval.smp import *
+from scieval.utils.result_transfer import MMMU_result_transfer, MMTBench_result_transfer
 
 
 # Make WORLD_SIZE invisible when build models
-def build_model_from_config(cfg, model_name, use_vllm=False):
-    import vlmeval.api
-    import vlmeval.vlm
+def build_model_from_config(cfg, model_name, use_vllm=False, args=None):
+    import scieval.api
+    import scieval.vlm
     ws_bak = os.environ.pop('WORLD_SIZE', None)
 
     config = cp.deepcopy(cfg[model_name])
+    if args is not None:
+        if 'retry' not in config:
+            if hasattr(args, 'retry') and args.retry is not None:
+                config['retry'] = args.retry
+        if 'fail_fast' not in config:
+            if hasattr(args, 'fail_fast') and args.fail_fast:
+                config['fail_fast'] = True
+        if 'verbose' not in config:
+            if hasattr(args, 'verbose') and args.verbose:
+                config['verbose'] = True
+        if 'ignore_patterns' not in config:
+            if hasattr(args, 'ignore_patterns') and args.ignore_patterns:
+                config['ignore_patterns'] = args.ignore_patterns
+        if 'stream' not in config:
+            if hasattr(args, 'stream') and args.stream:
+                config['stream'] = True
+
     if use_vllm:
         config['use_vllm'] = use_vllm
     if 'class' not in config:
         return supported_VLM[model_name](**config)
     cls_name = config.pop('class')
-    if hasattr(vlmeval.api, cls_name):
-        model = getattr(vlmeval.api, cls_name)(**config)
-    elif hasattr(vlmeval.vlm, cls_name):
-        model = getattr(vlmeval.vlm, cls_name)(**config)
+    if hasattr(scieval.api, cls_name):
+        model = getattr(scieval.api, cls_name)(**config)
+    elif hasattr(scieval.vlm, cls_name):
+        model = getattr(scieval.vlm, cls_name)(**config)
     else:
-        raise ValueError(f'Class {cls_name} is not supported in `vlmeval.api` or `vlmeval.vlm`')
+        raise ValueError(f'Class {cls_name} is not supported in `scieval.api` or `scieval.vlm`')
 
     if ws_bak:
         os.environ['WORLD_SIZE'] = ws_bak
@@ -74,15 +91,15 @@ def build_model_from_config(cfg, model_name, use_vllm=False):
 
 
 def build_dataset_from_config(cfg, dataset_name):
-    import vlmeval.dataset
+    import scieval.dataset
     import inspect
     config = cp.deepcopy(cfg[dataset_name])
     if config == {}:
         return supported_video_datasets[dataset_name]()
     assert 'class' in config
     cls_name = config.pop('class')
-    if hasattr(vlmeval.dataset, cls_name):
-        cls = getattr(vlmeval.dataset, cls_name)
+    if hasattr(scieval.dataset, cls_name):
+        cls = getattr(scieval.dataset, cls_name)
         sig = inspect.signature(cls.__init__)
         valid_params = {k: v for k, v in config.items() if k in sig.parameters}
         if cls.MODALITY == 'VIDEO':
@@ -92,7 +109,7 @@ def build_dataset_from_config(cfg, dataset_name):
                 raise ValueError('fps and nframe should be set at least one valid value')
         return cls(**valid_params)
     else:
-        raise ValueError(f'Class {cls_name} is not supported in `vlmeval.dataset`')
+        raise ValueError(f'Class {cls_name} is not supported in `scieval.dataset`')
 
 
 def parse_args():
@@ -101,17 +118,17 @@ You can launch the evaluation by setting either --data and --model or --config.
 
 --data and --model:
     Each Arg should be a list of strings, specifying the names of datasets and models.
-    To find all supported model names, please refer to the `vlmeval/config.py` of check the output of the command \
-        `vlmutil mlist all` in the terminal (you should first have vlmeval installed).
-    To find all supported dataset names, please refer to the `vlmeval/dataset/__init__.py` file. The python script \
+    To find all supported model names, please refer to the `scieval/config.py` of check the output of the command \
+        `vlmutil mlist all` in the terminal (you should first have scieval installed).
+    To find all supported dataset names, please refer to the `scieval/dataset/__init__.py` file. The python script \
         to print all supported dataset names is as follows:
         ```python
-        from vlmeval.dataset import SUPPORTED_DATASETS
+        from scieval.dataset import SUPPORTED_DATASETS
         print(SUPPORTED_DATASETS)
         ```
         or you can check the output of the command `vlmutil dlist all` in the terminal.
     To find all supported video dataset default settings, please refer to the \
-        `vlmeval/dataset/video_dataset_config.py` file.
+        `scieval/dataset/video_dataset_config.py` file.
 
 --config:
     Launch the evaluation by specifying the path to the config json file. Sample Json Content:
@@ -153,16 +170,16 @@ You can launch the evaluation by setting either --data and --model or --config.
     ```
     Currently, only `model` and `data` are supported fields. The content of each field is a dictionary.
     For `model`, the key is the name of the model, and the value is a dictionary containing the following keys:
-    - `class`: The class name of the model, which should be a class in `vlmeval.vlm` or `vlmeval.api`.
+    - `class`: The class name of the model, which should be a class in `scieval.vlm` or `scieval.api`.
     - Other keys are specific to the model, please refer to the corresponding class.
-    - Tip: The defined model in the `supported_VLM` of `vlmeval/config.py` can be used as a shortcut.
+    - Tip: The defined model in the `supported_VLM` of `scieval/config.py` can be used as a shortcut.
     For `data`, the key is the name of the dataset (should be the same as the `dataset` field in most cases, \
         except for video datasets), and the value is a dictionary containing the following keys:
-    - `class`: The class name of the dataset, which should be a class in `vlmeval.dataset`.
+    - `class`: The class name of the dataset, which should be a class in `scieval.dataset`.
     - `dataset`: The name of the dataset, which should be a string that is accepted by the `dataset` argument of the \
         corresponding class.
     - Other keys are specific to the dataset, please refer to the corresponding class.
-    - Tip: The defined dataset in the `supported_video_datasets` of `vlmeval/dataset/video_dataset_config.py` \
+    - Tip: The defined dataset in the `supported_video_datasets` of `scieval/dataset/video_dataset_config.py` \
         can be used as a shortcut.
 
     The keys in the `model` and `data` fields will be used for naming the prediction files and evaluation results.
@@ -195,11 +212,12 @@ You can launch the evaluation by setting either --data and --model or --config.
     parser.add_argument(
         '--use-vllm', action='store_true', help='use vllm to generate, the flag is only supported in Llama4 for now')
     parser.add_argument('--use-verifier', action='store_true', help='use verifier to evaluate')
-    parser.add_argument('--max-retries', type=int, default=1, help='Maximum number of retries for API calls. Specifically in generate_inner method in gpt.py, it should be fixed in future versions '
-                                                                   'Default is 1 (no retries). Must be an integer >= 1.')
     parser.add_argument('--fail-fast', action='store_true', help='If set, the program will raise an exception and stop upon an unrecoverable API error '
              'after all retries are exhausted. If not set, it will record a failure message and continue. Specifically in generate_inner method in gpt.py, it should be fixed in future versions')
-
+    parser.add_argument('--ignore-patterns', type=str, nargs='+',
+                        default=None,
+                        help='Keywords in error messages to ignore and treat as valid output')
+    parser.add_argument('--stream', action='store_true', help='Use streaming mode for API calls. Default is False.')
     args = parser.parse_args()
     return args
 
@@ -233,11 +251,17 @@ def main():
             if hasattr(v, 'keywords') and 'verbose' in v.keywords and args.verbose is not None:
                 v.keywords['verbose'] = args.verbose
                 supported_VLM[k] = v
+            if args.fail_fast:
+                v.keywords['fail_fast'] = True
+            if args.ignore_patterns:
+                v.keywords['ignore_patterns'] = args.ignore_patterns
+            if args.stream:
+                v.keywords['stream'] = True
 
         # If FWD_API is set, will use class `GPT4V` for all API models in the config
         if os.environ.get('FWD_API', None) == '1':
-            from vlmeval.config import api_models as supported_APIs
-            from vlmeval.api import GPT4V
+            from scieval.config import api_models as supported_APIs
+            from scieval.api import GPT4V
             for m in args.model:
                 if m in supported_APIs:
                     kws = supported_VLM[m].keywords
@@ -268,7 +292,7 @@ def main():
             os.makedirs(pred_root, exist_ok=True)
 
         if use_config:
-            model = build_model_from_config(cfg['model'], model_name, args.use_vllm)
+            model = build_model_from_config(cfg['model'], model_name, args.use_vllm,args=args)
 
         for _, dataset_name in enumerate(args.data):
             if WORLD_SIZE > 1:
@@ -350,8 +374,6 @@ def main():
                             api_nproc=args.api_nproc,
                             ignore_failed=args.ignore,
                             use_vllm=args.use_vllm,
-                            max_retries=args.max_retries,
-                            fail_fast=args.fail_fast
                         )
 
                 # Set the judge kwargs first before evaluation or dumping
@@ -360,8 +382,8 @@ def main():
                     'nproc': args.api_nproc,
                     'verbose': args.verbose,
                     'retry': args.retry if args.retry is not None else 3,
-                    'max_retries': args.max_retries,
-                    'fail_fast': args.fail_fast,
+                    # 'max_retries': args.max_retries,
+                    # 'fail_fast': args.fail_fast,
                     **(json.loads(args.judge_args) if args.judge_args else {}),
                 }
                 # Pass work_dir to dataset.evaluate so paths are constructed correctly
@@ -472,23 +494,45 @@ def main():
                     if eval_proxy is not None:
                         proxy_set(eval_proxy)
 
-                    # Perform the Evaluation
-                    eval_results = dataset.evaluate(result_file, **judge_kwargs)
-                    # Display Evaluation Results in Terminal
-                    if eval_results is not None:
-                        assert isinstance(eval_results, dict) or isinstance(eval_results, pd.DataFrame)
-                        logger.info(f'The evaluation of model {model_name} x dataset {dataset_name} has finished! ')
-                        logger.info('Evaluation Results:')
-                        if isinstance(eval_results, dict):
-                            logger.info('\n' + json.dumps(eval_results, indent=4))
-                        elif isinstance(eval_results, pd.DataFrame):
-                            if len(eval_results) < len(eval_results.columns):
-                                eval_results = eval_results.T
-                            logger.info('\n' + tabulate(eval_results))
+                    env_backup = {}
+                    new_keys_added = []
+                    for key, value in list(os.environ.items()):
+                        if key.endswith('_EVAL'):
+                            if not value or value.strip() == "":
+                                continue
+                            target_key = key[:-5]
+                            if target_key in os.environ:
+                                env_backup[target_key] = os.environ[target_key]
+                            else:
+                                new_keys_added.append(target_key)
+                            os.environ[target_key] = value
+                            logger.info(f"[Eval Env] Overriding {target_key} using {key}")
+                    try:
+                        # Perform the Evaluation
+                        eval_results = dataset.evaluate(result_file, **judge_kwargs)
+                        # Display Evaluation Results in Terminal
+                        if eval_results is not None:
+                            assert isinstance(eval_results, dict) or isinstance(eval_results, pd.DataFrame)
+                            logger.info(f'The evaluation of model {model_name} x dataset {dataset_name} has finished! ')
+                            logger.info('Evaluation Results:')
+                            if isinstance(eval_results, dict):
+                                logger.info('\n' + json.dumps(eval_results, indent=4))
+                            elif isinstance(eval_results, pd.DataFrame):
+                                if len(eval_results) < len(eval_results.columns):
+                                    eval_results = eval_results.T
+                                logger.info('\n' + tabulate(eval_results))
+                    except Exception as e:
+                        raise(e)
 
-                    # Restore the proxy
-                    if eval_proxy is not None:
-                        proxy_set(old_proxy)
+                    finally:
+                        for key, value in env_backup.items():
+                            os.environ[key] = value
+                        for key in new_keys_added:
+                            if key in os.environ:
+                                del os.environ[key]
+                        if eval_proxy is not None:
+                            proxy_set(old_proxy)
+
 
                     # Create the symbolic links for the prediction files
                     files = os.listdir(pred_root)
