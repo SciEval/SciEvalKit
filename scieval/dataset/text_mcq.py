@@ -130,7 +130,7 @@ class ProteinLMBench(TextMCQDataset):
     # defalt evaluation is exact matching
 
     DATASET_URL = {
-        "ProteinLMBench": "https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/ProteinLMBench.tsv"
+        "ProteinLMBench": "https://huggingface.co/datasets/InternScience/SciEval/resolve/main/ProteinLMBench.tsv"
     }
 
     DATASET_MD5 = {

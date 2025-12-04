@@ -71,7 +71,7 @@ class TRQA(TextMCQDataset):
     MODALITY = 'TEXT'
     TYPE = 'MCQ'
     DATASET_URL = {
-        'TRQA': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/TRQA.tsv'
+        'TRQA': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/TRQA.tsv'
     }
     DATASET_MD5 = {
         'TRQA':'756bf0b1cb5e917f2ea1a0fabfd3509b'

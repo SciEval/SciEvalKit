@@ -95,7 +95,7 @@ class ResearchbenchGenerate(TextBaseDataset):
     TYPE = 'GEN'
 
     DATASET_URL = {
-        'ResearchbenchGenerate': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/ResearchbenchGenerate.tsv'
+        'ResearchbenchGenerate': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/ResearchbenchGenerate.tsv'
     }
 
     DATASET_MD5 = {

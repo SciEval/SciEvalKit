@@ -19,7 +19,7 @@ class ResearchbenchRetrieve(TextBaseDataset):
     TYPE = "TEXT"
     NAME = "ResearchbenchRetrieve"
     DATASET_URL = {
-        'ResearchbenchRetrieve': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/ResearchbenchRetrieve.tsv'
+        'ResearchbenchRetrieve': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/ResearchbenchRetrieve.tsv'
     }
 
     DATASET_MD5 = {

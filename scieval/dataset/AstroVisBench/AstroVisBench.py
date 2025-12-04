@@ -38,8 +38,8 @@ def remove_ticks(code):
 
 class AstroVisBench(ImageVQADataset):
     DATASET_URL = {
-        'AstroVisBench_Processing': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/AstroVisBench_Processing.tsv',
-        'AstroVisBench_Visualization': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/AstroVisBench_Processing.tsv'
+        'AstroVisBench_Processing': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/AstroVisBench_Processing.tsv',
+        'AstroVisBench_Visualization': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/AstroVisBench_Processing.tsv'
     }
     DATASET_MD5 = {
         'AstroVisBench_Processing': '18160b423a5174e26c7832eb4180f30b',

@@ -17,7 +17,7 @@ class Clima_QA(TextBaseDataset):\
     TYPE = 'QA'
 
     DATASET_URL = {
-        'Clima_QA': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/ClimaQA_Gold.tsv',
+        'Clima_QA': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/ClimaQA_Gold.tsv',
     }
 
     DATASET_MD5 = {

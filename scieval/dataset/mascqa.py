@@ -107,7 +107,7 @@ class MaScQA(TextBaseDataset):
     MODALITY = 'TEXT'
     TYPE = 'QA'
     DATASET_URL = {
-        'MaScQA': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/MaScQA.tsv'
+        'MaScQA': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/MaScQA.tsv'
     }
     DATASET_MD5 = {
         'MaScQA': '94e67417d44c5c62c6dec6a8b4112ef7'

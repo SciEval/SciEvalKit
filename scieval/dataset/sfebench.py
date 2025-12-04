@@ -104,8 +104,8 @@ def SFE_auxeval(model, data):
 class SFE(ImageVQADataset):
 
     DATASET_URL = {
-        'SFE': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/SFE.tsv',
-        'SFE-zh': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/SFE-zh.tsv'
+        'SFE': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/SFE.tsv',
+        'SFE-zh': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/SFE-zh.tsv'
     }
 
     DATASET_MD5 = {

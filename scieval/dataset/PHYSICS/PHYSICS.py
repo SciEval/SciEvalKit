@@ -99,7 +99,7 @@ def timeout(seconds):
 class PHYSICS(TextBaseDataset):
     TYPE = "QA"
     DATASET_URL = {
-        'PHYSICS': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/PHYSICS.tsv'
+        'PHYSICS': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/PHYSICS.tsv'
     }
 
     DATASET_MD5 = {

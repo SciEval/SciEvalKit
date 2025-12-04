@@ -118,7 +118,7 @@ class EarthSE(TextBaseDataset):
     TYPE = 'QA'
 
     DATASET_URL = {
-        'EarthSE': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/EarthSE.tsv', # TODO upload data
+        'EarthSE': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/EarthSE.tsv', # TODO upload data
     }
 
     DATASET_MD5 = {

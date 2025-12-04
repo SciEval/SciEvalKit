@@ -62,7 +62,7 @@ class CMPhysBench(TextBaseDataset):
     dataset_name = "CMPhysBench"
 
     DATASET_URL = {
-        'CMPhysBench': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/CMPhysBench.tsv'
+        'CMPhysBench': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/CMPhysBench.tsv'
     }
 
     DATASET_MD5 = {

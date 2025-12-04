@@ -29,7 +29,7 @@ class ResearchbenchRank(TextBaseDataset):
     )
 
     DATASET_URL = {
-        'ResearchbenchRank': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/ResearchbenchRank.tsv'
+        'ResearchbenchRank': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/ResearchbenchRank.tsv'
     }
 
     DATASET_MD5 = {

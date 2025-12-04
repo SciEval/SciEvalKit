@@ -2212,7 +2212,7 @@ class OmniMedVQA(ImageMCQDataset):
 class MSEarthMCQ(ImageMCQDataset):
 
     DATASET_URL = {
-        'MSEarthMCQ': 'https://huggingface.co/datasets/PrismaX/PrismaEval/resolve/main/MSEarthMCQ.tsv',
+        'MSEarthMCQ': 'https://huggingface.co/datasets/InternScience/SciEval/resolve/main/MSEarthMCQ.tsv',
     }
 
     DATASET_MD5 = {
